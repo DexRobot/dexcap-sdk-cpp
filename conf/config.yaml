@@ -1,0 +1,32 @@
+server:
+  enable: true
+  addr: 127.0.0.1
+  port: 8080
+  protocol: TCP    # Accepted values are: TCP, or UDP
+
+left_hand:
+  enable: false
+  port_name: /dev/ttyUSB0
+  adapter: wireless    # Accepted values are: wired, or wireless
+  device_id: 1
+  baud_rate: 115200    # Accepted values are: 115200, or 921600
+  sample_rate: 1000    # Up to 1000
+  debug: false
+
+right_hand:
+  enable: true
+  port_name: /dev/ttyUSB0
+  adapter: wired
+  device_id: 1
+  baud_rate: 921600
+  sample_rate: 1000
+  debug: true
+
+up_body:
+  enable: false
+  port_name: /dev/ttyACM0
+  adapter: wired
+  device_id: 1
+  baud_rate: 921600
+  sample_rate: 1000
+  debug: false

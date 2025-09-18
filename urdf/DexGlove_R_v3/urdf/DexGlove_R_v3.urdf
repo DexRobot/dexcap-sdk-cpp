@@ -1,0 +1,1265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="DexGlove_R_v3">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="0.023761860315371 0.00951380358483844 -0.0171477452899252"
+        rpy="0 0 0" />
+      <mass
+        value="0.0800001363416735" />
+      <inertia
+        ixx="8.60941152571589E-05"
+        ixy="2.7160955180655E-05"
+        ixz="-8.778460116554E-06"
+        iyy="7.23337755569218E-05"
+        iyz="7.90537520408906E-06"
+        izz="0.000150602962193877" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="glove_link_r_1_1">
+    <inertial>
+      <origin
+        xyz="-0.00215560282431622 -0.00338452396256511 -0.0131217612115497"
+        rpy="0 0 0" />
+      <mass
+        value="0.00385822214196221" />
+      <inertia
+        ixx="2.65496370188704E-07"
+        ixy="-5.80377894359212E-09"
+        ixz="6.46131186950765E-09"
+        iyy="2.67304557171569E-07"
+        iyz="-3.27448436607223E-08"
+        izz="2.83529407418494E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_1_1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_1_1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="glove_joint_r_1_1"
+    type="revolute">
+    <origin
+      xyz="-0.020715 0.061876 -0.050557"
+      rpy="1.0492 1.5085 -1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="glove_link_r_1_1" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.1416"
+      upper="3.1416"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="glove_link_r_1_2">
+    <inertial>
+      <origin
+        xyz="0.000703204634177113 0.0127309630254523 -0.00288012020718703"
+        rpy="0 0 0" />
+      <mass
+        value="0.00199934399680952" />
+      <inertia
+        ixx="1.4141492897948E-07"
+        ixy="-5.06019699424475E-09"
+        ixz="1.28470320759737E-09"
+        iyy="5.78189620081375E-08"
+        iyz="2.26573887461125E-08"
+        izz="1.46649343573011E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_1_2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_1_2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="glove_joint_r_1_2"
+    type="revolute">
+    <origin
+      xyz="0 0 -0.01925"
+      rpy="-1.5708 0.031013 -0.054007" />
+    <parent
+      link="glove_link_r_1_1" />
+    <child
+      link="glove_link_r_1_2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.1416"
+      upper="3.1416"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="glove_link_r_1_3">
+    <inertial>
+      <origin
+        xyz="0.0300564898606841 0.0332986622768831 0.00327888929656313"
+        rpy="0 0 0" />
+      <mass
+        value="0.00757174828550405" />
+      <inertia
+        ixx="3.77011461304591E-06"
+        ixy="-2.69626743699442E-06"
+        ixz="1.55556957056538E-08"
+        iyy="2.22966959980734E-06"
+        iyz="6.16335901993104E-09"
+        izz="5.88475844741757E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_1_3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_1_3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="glove_joint_r_1_3"
+    type="revolute">
+    <origin
+      xyz="0 0.0185 -0.0047"
+      rpy="1.5708 1.05 1.5708" />
+    <parent
+      link="glove_link_r_1_2" />
+    <child
+      link="glove_link_r_1_3" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-3.1416"
+      upper="3.1416"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="glove_link_r_1_4">
+    <inertial>
+      <origin
+        xyz="-0.0273027203066123 0.00433297070625258 0.00241777178524144"
+        rpy="0 0 0" />
+      <mass
+        value="0.00546091639196909" />
+      <inertia
+        ixx="1.23496798110625E-07"
+        ixy="1.24147394764359E-08"
+        ixz="2.00681155066105E-08"
+        iyy="1.50189627783358E-06"
+        iyz="7.83448669164175E-09"
+        izz="1.5343988014535E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_1_4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_1_4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="glove_joint_r_1_4"
+    type="revolute">
+    <origin
+      xyz="0.050645 0.068265 0"
+      rpy="0 0 0" />
+    <parent
+      link="glove_link_r_1_3" />
+    <child
+      link="glove_link_r_1_4" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-3.1416"
+      upper="3.1416"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="glove_link_r_1_5">
+    <inertial>
+      <origin
+        xyz="-0.00576308402246906 0.0141715905203049 -1.25793672523661E-07"
+        rpy="0 0 0" />
+      <mass
+        value="0.00340265713988394" />
+      <inertia
+        ixx="2.78681728351716E-07"
+        ixy="4.89958730526717E-09"
+        ixz="-2.02672654226436E-12"
+        iyy="1.06533402001961E-07"
+        iyz="3.39837380726619E-12"
+        izz="2.61408336175759E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_1_5.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_1_5.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="glove_joint_r_1_5"
+    type="revolute">
+    <origin
+      xyz="-0.049966 0.0018328 0"
+      rpy="0 0 0" />
+    <parent
+      link="glove_link_r_1_4" />
+    <child
+      link="glove_link_r_1_5" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-3.1416"
+      upper="3.1416"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="glove_link_r_2_1">
+    <inertial>
+      <origin
+        xyz="0.000747078578568816 0.0129611689921841 -0.00251565033753172"
+        rpy="0 0 0" />
+      <mass
+        value="0.00185408804040392" />
+      <inertia
+        ixx="1.3826521595293E-07"
+        ixy="-5.67644938603439E-09"
+        ixz="9.85785900713521E-10"
+        iyy="5.23525487330407E-08"
+        iyz="2.30715174168708E-08"
+        izz="1.44653206569029E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_2_1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_2_1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="glove_joint_r_2_1"
+    type="revolute">
+    <origin
+      xyz="0.074852 0.024382 -0.017"
+      rpy="3.1416 0 1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="glove_link_r_2_1" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.1416"
+      upper="3.1416"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="glove_link_r_2_2">
+    <inertial>
+      <origin
+        xyz="-0.0432047249107304 0.0188212441937342 -0.00192897538363368"
+        rpy="0 0 0" />
+      <mass
+        value="0.00689032055294319" />
+      <inertia
+        ixx="1.55216189683491E-06"
+        ixy="2.28437720762957E-06"
+        ixz="2.02312774105471E-09"
+        iyy="4.03818002550441E-06"
+        iyz="1.20327742388734E-08"
+        izz="5.502047740829E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_2_2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_2_2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="glove_joint_r_2_2"
+    type="revolute">
+    <origin
+      xyz="0 0.0185 -0.0047"
+      rpy="0 -1.5708 0" />
+    <parent
+      link="glove_link_r_2_1" />
+    <child
+      link="glove_link_r_2_2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.1416"
+      upper="3.1416"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="glove_link_r_2_3">
+    <inertial>
+      <origin
+        xyz="0.0373475264795882 0.00422086383729055 -0.00270027714902976"
+        rpy="0 0 0" />
+      <mass
+        value="0.00556501270482669" />
+      <inertia
+        ixx="1.5408832390469E-07"
+        ixy="6.31594517824487E-08"
+        ixz="2.82032055407321E-09"
+        iyy="2.78387109298286E-06"
+        iyz="-2.2972311186309E-09"
+        izz="2.8588292783013E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_2_3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_2_3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="glove_joint_r_2_3"
+    type="revolute">
+    <origin
+      xyz="-0.073326 0.042996 -0.0001"
+      rpy="0 0 0" />
+    <parent
+      link="glove_link_r_2_2" />
+    <child
+      link="glove_link_r_2_3" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.1416"
+      upper="3.1416"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="glove_link_r_2_4">
+    <inertial>
+      <origin
+        xyz="0.00925772788453139 0.0130310623410815 4.64213166795346E-08"
+        rpy="0 0 0" />
+      <mass
+        value="0.00329765568443397" />
+      <inertia
+        ixx="2.60953801146797E-07"
+        ixy="-5.2973147605156E-08"
+        ixz="-3.04246220291912E-12"
+        iyy="1.0984655124966E-07"
+        iyz="-5.64849613594494E-12"
+        izz="2.70314932688703E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_2_4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_2_4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="glove_joint_r_2_4"
+    type="revolute">
+    <origin
+      xyz="0.064976 -0.00029093 0.0001"
+      rpy="0 0 0" />
+    <parent
+      link="glove_link_r_2_3" />
+    <child
+      link="glove_link_r_2_4" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.1416"
+      upper="3.1416"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="glove_link_r_3_1">
+    <inertial>
+      <origin
+        xyz="0.000747078356090336 0.0129546278341492 -0.00252357406932724"
+        rpy="0 0 0" />
+      <mass
+        value="0.00185408804040393" />
+      <inertia
+        ixx="1.38265216147807E-07"
+        ixy="-5.67378167842018E-09"
+        ixz="9.89015279335301E-10"
+        iyy="5.22983364011677E-08"
+        iyz="2.30610586528733E-08"
+        izz="1.44707418706026E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_3_1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_3_1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="glove_joint_r_3_1"
+    type="revolute">
+    <origin
+      xyz="0.076856 0.0021271 -0.01675"
+      rpy="3.1416 0 1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="glove_link_r_3_1" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.1416"
+      upper="3.1416"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="glove_link_r_3_2">
+    <inertial>
+      <origin
+        xyz="-0.0437503754011137 0.0254652883230961 -0.00193337245558944"
+        rpy="0 0 0" />
+      <mass
+        value="0.00714939436781028" />
+      <inertia
+        ixx="2.63983476830821E-06"
+        ixy="3.10758948967801E-06"
+        ixz="8.34288494523747E-09"
+        iyy="4.22295638672389E-06"
+        iyz="1.00310120051534E-08"
+        izz="6.77592921190429E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_3_2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_3_2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="glove_joint_r_3_2"
+    type="revolute">
+    <origin
+      xyz="0 0.0185 -0.0047"
+      rpy="0 -1.5708 0" />
+    <parent
+      link="glove_link_r_3_1" />
+    <child
+      link="glove_link_r_3_2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.1416"
+      upper="3.1416"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="glove_link_r_3_3">
+    <inertial>
+      <origin
+        xyz="0.0373342972773562 0.00433589063270132 -0.00270667841776762"
+        rpy="0 0 0" />
+      <mass
+        value="0.00556501261668927" />
+      <inertia
+        ixx="1.53717054500497E-07"
+        ixy="5.51257812971243E-08"
+        ixz="2.82525599982385E-09"
+        iyy="2.78424229454622E-06"
+        iyz="-2.29015298179469E-09"
+        izz="2.85882921129466E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_3_3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_3_3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="glove_joint_r_3_3"
+    type="revolute">
+    <origin
+      xyz="-0.073077 0.055905 0"
+      rpy="0 0 0" />
+    <parent
+      link="glove_link_r_3_2" />
+    <child
+      link="glove_link_r_3_3" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.1416"
+      upper="3.1416"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="glove_link_r_3_4">
+    <inertial>
+      <origin
+        xyz="0.00925772788453095 0.0130310623145435 4.65750134015508E-08"
+        rpy="0 0 0" />
+      <mass
+        value="0.00329765568443365" />
+      <inertia
+        ixx="2.60953801146768E-07"
+        ixy="-5.29731476051154E-08"
+        ixz="-3.0430870017335E-12"
+        iyy="1.09846551249788E-07"
+        iyz="-5.65038881151817E-12"
+        izz="2.70314932688544E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_3_4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_3_4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="glove_joint_r_3_4"
+    type="revolute">
+    <origin
+      xyz="0.064977 -8.5765E-05 0"
+      rpy="0 0 0" />
+    <parent
+      link="glove_link_r_3_3" />
+    <child
+      link="glove_link_r_3_4" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.1416"
+      upper="3.1416"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="glove_link_r_4_1">
+    <inertial>
+      <origin
+        xyz="0.000747078508896659 0.0129578089451243 -0.00250603590511165"
+        rpy="0 0 0" />
+      <mass
+        value="0.0018540880404039" />
+      <inertia
+        ixx="1.38265216013955E-07"
+        ixy="-5.6750793414947E-09"
+        ixz="9.81866859466802E-10"
+        iyy="5.23183644678508E-08"
+        iyz="2.31144513264536E-08"
+        izz="1.44687390773191E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_4_1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_4_1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="glove_joint_r_4_1"
+    type="revolute">
+    <origin
+      xyz="0.072856 -0.020125 -0.01675"
+      rpy="3.1416 0 1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="glove_link_r_4_1" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.1416"
+      upper="3.1416"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="glove_link_r_4_2">
+    <inertial>
+      <origin
+        xyz="-0.0430884132210104 0.0190905916088625 -0.00192897541064418"
+        rpy="0 0 0" />
+      <mass
+        value="0.00689032059597664" />
+      <inertia
+        ixx="1.58042021295108E-06"
+        ixy="2.29956267231873E-06"
+        ixz="2.09602471223716E-09"
+        iyy="4.00992174752506E-06"
+        iyz="1.20161069466051E-08"
+        izz="5.50204777893461E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_4_2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_4_2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="glove_joint_r_4_2"
+    type="revolute">
+    <origin
+      xyz="0 0.0185 -0.0047"
+      rpy="0 -1.5708 0" />
+    <parent
+      link="glove_link_r_4_1" />
+    <child
+      link="glove_link_r_4_2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.1416"
+      upper="3.1416"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="glove_link_r_4_3">
+    <inertial>
+      <origin
+        xyz="0.0372363657672597 0.00510874992183366 -0.00270454458666469"
+        rpy="0 0 0" />
+      <mass
+        value="0.00556501163223649" />
+      <inertia
+        ixx="1.52565231755437E-07"
+        ixy="5.45417482540578E-10"
+        ixz="2.87276702758357E-09"
+        iyy="2.78539357233941E-06"
+        iyz="-2.23049102822039E-09"
+        izz="2.85882865912642E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_4_3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_4_3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="glove_joint_r_4_3"
+    type="revolute">
+    <origin
+      xyz="-0.073065 0.043442 0"
+      rpy="0 0 0" />
+    <parent
+      link="glove_link_r_4_2" />
+    <child
+      link="glove_link_r_4_3" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.1416"
+      upper="3.1416"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="glove_link_r_4_4">
+    <inertial>
+      <origin
+        xyz="0.00925772788453125 0.0130310623410814 4.64213162354454E-08"
+        rpy="0 0 0" />
+      <mass
+        value="0.00329765568443398" />
+      <inertia
+        ixx="2.60953801146803E-07"
+        ixy="-5.29731476051561E-08"
+        ixz="-3.04246220287962E-12"
+        iyy="1.09846551249661E-07"
+        iyz="-5.6484961331052E-12"
+        izz="2.70314932688709E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_4_4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_4_4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="glove_joint_r_4_4"
+    type="revolute">
+    <origin
+      xyz="0.064965 0.0012591 0"
+      rpy="0 0 0" />
+    <parent
+      link="glove_link_r_4_3" />
+    <child
+      link="glove_link_r_4_4" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.1416"
+      upper="3.1416"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="glove_link_r_5_1">
+    <inertial>
+      <origin
+        xyz="0.000747078469971685 0.0129542437218486 -0.00250397139958741"
+        rpy="0 0 0" />
+      <mass
+        value="0.00185408804040391" />
+      <inertia
+        ixx="1.38265216048051E-07"
+        ixy="-5.67362586970243E-09"
+        ixz="9.81025281521775E-10"
+        iyy="5.22967300625831E-08"
+        iyz="2.31020348480337E-08"
+        izz="1.44709025144363E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_5_1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_5_1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="glove_joint_r_5_1"
+    type="revolute">
+    <origin
+      xyz="0.054856 -0.040125 -0.01675"
+      rpy="-3.1416 0 1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="glove_link_r_5_1" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.1416"
+      upper="3.1416"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="glove_link_r_5_2">
+    <inertial>
+      <origin
+        xyz="-0.0377511137570105 0.0103117298233965 -0.00190285306973448"
+        rpy="0 0 0" />
+      <mass
+        value="0.00576773064486739" />
+      <inertia
+        ixx="5.60438385538893E-07"
+        ixy="1.03395210537287E-06"
+        ixz="-1.85893116849145E-09"
+        iyy="2.69965910418639E-06"
+        iyz="1.01236697792008E-08"
+        izz="3.18135158700318E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_5_2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_5_2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="glove_joint_r_5_2"
+    type="revolute">
+    <origin
+      xyz="0 0.0185 -0.0047"
+      rpy="0 -1.5708 0" />
+    <parent
+      link="glove_link_r_5_1" />
+    <child
+      link="glove_link_r_5_2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.1416"
+      upper="3.1416"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="glove_link_r_5_3">
+    <inertial>
+      <origin
+        xyz="0.0319616133109541 0.0136908276570892 -0.0026673703140323"
+        rpy="0 0 0" />
+      <mass
+        value="0.00511702595572813" />
+      <inertia
+        ixx="2.98860905848742E-07"
+        ixy="-5.94474194780334E-07"
+        ixz="6.96742967592607E-09"
+        iyy="2.00647845514208E-06"
+        iyz="3.89976581395725E-10"
+        izz="2.23242411259509E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_5_3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_5_3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="glove_joint_r_5_3"
+    type="revolute">
+    <origin
+      xyz="-0.065037 0.025888 0"
+      rpy="0 0 0" />
+    <parent
+      link="glove_link_r_5_2" />
+    <child
+      link="glove_link_r_5_3" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.1416"
+      upper="3.1416"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="glove_link_r_5_4">
+    <inertial>
+      <origin
+        xyz="0.00925772788458982 0.0130310623342812 4.64604593686246E-08"
+        rpy="0 0 0" />
+      <mass
+        value="0.00329765568443396" />
+      <inertia
+        ixx="2.60953801146321E-07"
+        ixy="-5.29731476058253E-08"
+        ixz="-3.04262132699591E-12"
+        iyy="1.09846551250171E-07"
+        iyz="-5.64897816187756E-12"
+        izz="2.70314932688668E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_5_4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://DexGlove_R_v3/meshes/glove_link_r_5_4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="glove_joint_r_5_4"
+    type="revolute">
+    <origin
+      xyz="0.056937 0.018926 0"
+      rpy="0 0 0" />
+    <parent
+      link="glove_link_r_5_3" />
+    <child
+      link="glove_link_r_5_4" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.1416"
+      upper="3.1416"
+      effort="0"
+      velocity="0" />
+  </joint>
+</robot>

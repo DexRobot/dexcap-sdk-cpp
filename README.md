@@ -4,7 +4,7 @@
 
 ### 1.1 目录结构布局
 
-```JSON
+```
 DexCapSDK/
 ├── include/                   # 对外头文件（按设备模块划分）
 │   ├── configuration.h        # 数采手套和外骨骼设备的配置读取

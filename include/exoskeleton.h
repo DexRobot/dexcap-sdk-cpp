@@ -103,6 +103,8 @@ public:
 
     void registerDataCallback(const DataCallback & callback);
 
+    void obsolete(ExoApparatus);
+
 #ifdef WIN32
     void SwitchBaudRate(DWORD);
     void SwitchBaudRate(ExoApparatus, DWORD);
@@ -139,6 +141,9 @@ private:
     std::shared_ptr<Glove> rHand;
     std::shared_ptr<Arm>   body;
 
+    int64_t keepAliveTs;
+
+    std::mutex mtx;
     std::promise<void> exitSignal;
     std::future<void> futureCtl;
     std::shared_ptr<std::thread> readThread;
@@ -147,6 +152,8 @@ private:
     std::string errMsg;
 
     DataCallback dataCallback;
+
+    bool allClosed;
 };
 
 }

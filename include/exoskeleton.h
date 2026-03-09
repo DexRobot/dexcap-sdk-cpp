@@ -64,8 +64,6 @@ public:
     uint8_t GetRightHandID() const;
     uint8_t GetBodyDeviceID() const;
 
-    void UpdateDeviceID(ExoApparatus apptus, uint8_t newDeviceId);
-
     void SetLeftHandLogLevel(LOG_LEVEL);
     void SetRightHandLogLevel(LOG_LEVEL);
     void SetBodyLogLevel(LOG_LEVEL);
@@ -89,12 +87,7 @@ public:
 
     bool ReOpen(ExoApparatus);
 
-    bool CalibrateBodyInitPosition();
-    bool CalibrateLeftHandInitPosition();
-    bool CalibrateRightHandInitPosition();
-    DEX_RETURN CalibrateInitialPosition();
 
-    void Reset(ExoApparatus);
 
     void ReadCurrentState(ExoApparatus);
     uint16_t GetBatteryLevel(ExoApparatus) const;
@@ -102,6 +95,19 @@ public:
     void VibeMotors(ExoApparatus, const std::vector<uint8_t> &);
 
     void registerDataCallback(const DataCallback & callback);
+
+    ErrorCode getErrorCode() const { return this->errCode; }
+    const std::string & getErrorMessage();
+
+    uint8_t  WLGetChannel(ExoApparatus);
+    uint8_t  WLGetWorkPower(ExoApparatus);
+    uint16_t WLGetTxAddress(ExoApparatus);
+    uint16_t WLGetRxAddress(ExoApparatus);
+
+private:
+    void Reset(ExoApparatus);
+
+    void UpdateDeviceID(ExoApparatus apptus, uint8_t newDeviceId);
 
     void obsolete(ExoApparatus);
 
@@ -112,21 +118,17 @@ public:
     void SwitchBaudRate(BaudRate);
     void SwitchBaudRate(ExoApparatus, BaudRate);
 #endif // WIN32
-
-    ErrorCode getErrorCode() const { return this->errCode; }
-    const std::string & getErrorMessage();
+    
+    bool CalibrateBodyInitPosition();
+    bool CalibrateLeftHandInitPosition();
+    bool CalibrateRightHandInitPosition();
+    DEX_RETURN CalibrateInitialPosition();
 
     bool WLSetChannel(ExoApparatus, uint8_t channel);
     bool WLSetTxAddress(ExoApparatus, uint16_t txAddr);
     bool WLSetRxAddress(ExoApparatus, uint16_t rxAddr);
     bool WLSetWorkPower(ExoApparatus, uint8_t powerLevel);
 
-    uint8_t  WLGetChannel(ExoApparatus);
-    uint8_t  WLGetWorkPower(ExoApparatus);
-    uint16_t WLGetTxAddress(ExoApparatus);
-    uint16_t WLGetRxAddress(ExoApparatus);
-
-private:
     void recvFunc();
 
 private:

@@ -12,8 +12,7 @@
 #endif
 
 #include <yaml-cpp/yaml.h>
-
-#include "typedef.h"
+#include "cpp/TypeDef.hpp"
 
 
 namespace DexRobot
@@ -54,6 +53,11 @@ public:
     bool IsBodyEnabled() const;
     bool IsLeftHandEnabled() const;
     bool IsRightHandEnabled() const;
+
+    DEXCAP_DEVICE_TYPE GetDexCapDeviceType(const std::string & adapterName) const;
+    uint8_t GetDexCapDeviceID(const std::string & adapterName) const;
+    AdapterType GetAdapterType(const std::string & adapterName) const;
+    uint8_t GetDexHandType(const std::string & adapterName) const;
 
 #ifndef WIN32
     LibSerial::BaudRate GetBodyBaudRate() const;

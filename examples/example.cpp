@@ -7,7 +7,7 @@
 #include <cstring>
 #include <thread>
 #include "configuration.h"
-#include "exoskeleton.h"
+#include "cpp/DexCap.hpp"
 
 bool start_flag=true;
 
@@ -83,7 +83,7 @@ int main(int argc, const char ** argv)
     auto rDebug = config->IsDebugOnRightHand();
     auto bDebug = config->IsDebugOnBody();
 
-    DexRobot::ExoSkeleton dexcap(networkType);
+    DexRobot::DexCapSuit dexcap(ProductVersion::V4);
 
     if(networkOn)
     {

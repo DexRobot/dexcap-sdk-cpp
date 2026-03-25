@@ -34,26 +34,20 @@ else()
 endif()
 
 
-file(GLOB SRC_FILES
-        ./src/common.cpp
-        ./src/arm.cpp
-        ./src/glove.cpp
-        ./src/network.cpp
-        ./src/exoskeleton.cpp
-        ./src/configuration.cpp
-        ./src/WirelessAdapter.cpp
-)
+file(GLOB SRC_FILES)
 
-ADD_EXECUTABLE(DexCapDemo example.cpp)
+ADD_EXECUTABLE(DexCapDemo_C c_example.c)
+#ADD_EXECUTABLE(DexCapDemo_CPP example.cpp)
 
 if(UNIX)
     set(CMAKE_CXX_FLAGS "$ENV{CXXFLAGS} -g -O2 -Wno-narrowing -Wno-deprecated-enum-enum-conversion")
     set(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -g -O0 -Wno-narrowing -Wno-deprecated-enum-enum-conversion")
     set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -g -O2 -Wno-narrowing -Wno-deprecated-enum-enum-conversion")
     add_compile_options(-m64 -shared -fPIC -fno-strict-aliasing -Wstringop-overflow=0 -Wpessimizing-move)
-    target_link_libraries(DexCapDemo PUBLIC ${DEP_LIB_DIR}/libserial.so ${DEP_LIB_DIR}/libyaml-cpp.so ${DEP_LIB_DIR}/libusb-1.0.so ${DEP_LIB_DIR}/libDexCap.so)
+    target_link_libraries(DexCapDemo_C PUBLIC ${DEP_LIB_DIR}/libserial.so ${DEP_LIB_DIR}/libyaml-cpp.so ${DEP_LIB_DIR}/libusb-1.0.so ${DEP_LIB_DIR}/libDexCap.so)
+#target_link_libraries(DexCapDemo_CPP PUBLIC ${DEP_LIB_DIR}/libserial.so ${DEP_LIB_DIR}/libyaml-cpp.so ${DEP_LIB_DIR}/libusb-1.0.so ${DEP_LIB_DIR}/libDexCap.so)
 else()
-    target_compile_definitions(DexCapDemo PRIVATE YAML_CPP_DLL)
+    target_compile_definitions(DexCapDemo_CPP PRIVATE YAML_CPP_DLL)
 
     add_definitions(
             /GS /W3 /Gy /Ob2 /Zc:wchar_t /Zi /Gm- /Zc:inline /Zc:__cplusplus /fp:precise /D "WIN32"
@@ -67,10 +61,11 @@ else()
     set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O2 /MT")
     link_libraries(ws2_32)
     
-    target_link_libraries(DexCapDemo PUBLIC DexCap)
+    target_link_libraries(DexCapDemo_CPP PUBLIC DexCap)
 endif()
 
-set_target_properties(DexCapDemo PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${TARGET_DIR}")
+set_target_properties(DexCapDemo_C PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${TARGET_DIR}")
+#set_target_properties(DexCapDemo_CPP PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${TARGET_DIR}")
 
 add_custom_target(COPY_CONF_FILE ALL
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}

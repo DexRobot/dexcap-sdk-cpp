@@ -30,7 +30,7 @@ DEX_RETURN dexcap_create_suit_instance(DEXCAP_SUIT_HANDLE * hSuit);
  * want to connect this device via Bluetooth, then this argument must be BLUETOOTH.
  */
 DEX_RETURN dexcap_connect_suit_device(DEXCAP_SUIT_HANDLE hSuit, const char * devicePath,
-    DEXCAP_DEVICE_TYPE * deviceType, AdapterType adapterType);
+    DEXCAP_DEVICE_TYPE * deviceType, ADAPTER_TYPE adapterType);
 
 DEX_RETURN dexcap_disconnect_all_devices(DEXCAP_SUIT_HANDLE hSuit);
 DEX_RETURN dexcap_disconnect_suit_device(DEXCAP_SUIT_HANDLE hSuit, DEXCAP_DEVICE_TYPE deviceType);

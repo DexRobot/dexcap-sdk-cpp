@@ -14,6 +14,8 @@
 namespace DexRobot
 {
 
+typedef ADAPTER_TYPE AdapterType;
+
 enum class NetProtocolType
 {
     NA = 0,

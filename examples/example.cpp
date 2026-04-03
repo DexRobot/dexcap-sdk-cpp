@@ -1,13 +1,17 @@
+#include <thread>
+#include <cstring>
 #include <iostream>
+#include <fstream>
 
 #if defined(_MSC_VER) || defined(_WIN32)
 #define strcasecmp _stricmp
 #endif
 
-#include <cstring>
-#include <thread>
 #include "configuration.h"
 #include "cpp/DexCap.hpp"
+#include "example_defs.h"
+
+using namespace DexRobot;
 
 bool start_flag=true;
 
@@ -46,119 +50,124 @@ char * CmdReadLine(void)
     }
 }
 
-int main(int argc, const char ** argv)
+
+/// A log file for recording sensor data stream
+std::fstream logFile;
+
+void SensorDataCallback(const DexCapJointData * data)
 {
-#ifdef WIN32
-    SetConsoleOutputCP(CP_UTF8);  
-#endif // WIN32
+    if (data == nullptr)
+        return;
 
-    const auto config = DexRobot::DexCapConfig::Load("./config.yaml");
+    const auto & datetime = timestamp_to_datetime_string(data->timestamp);
 
-    if(config == nullptr)
+    if (data->mask & 0x8000)
     {
-        std::cout << "Configuration file open failed" << std::endl;
-    }
-
-    auto networkType = config->GetServerProtoType();
-    auto serverAddrs = config->GetServerAddress();
-    auto serverPort = config->GetServerPortNum();
-    auto networkOn = config->IsNetworkEnabled();
-
-    auto lAdapterName = config->GetLeftHandSPortName();
-    auto lDeviceId = config->GetLeftHandDeviceId();
-    auto lAdapterType = config->GetLeftHandAdapterType();
-    auto lHandEnabled = config->IsLeftHandEnabled();
-
-    auto rAdapterName = config->GetRightHandSPortName();
-    auto rDeviceId = config->GetRightHandDeviceId();
-    auto rAdapterType = config->GetRightHandAdapterType();
-    auto rHandEnabled = config->IsRightHandEnabled();
-
-    auto bAdapterName = config->GetBodySPortName();
-    auto bDeviceId = config->GetBodyDeviceId();
-    auto bAdapterType = config->GetBodyAdapterType();
-    auto bodyEnabled = config->IsBodyEnabled();
-
-    auto lDebug = config->IsDebugOnLeftHand();
-    auto rDebug = config->IsDebugOnRightHand();
-    auto bDebug = config->IsDebugOnBody();
-
-    DexRobot::DexCapSuit dexcap(ProductVersion::V4);
-
-    if(networkOn)
-    {
-        bool connected = true;
-        do {
-            connected = dexcap.InitNetwork(serverAddrs, serverPort);
-            if(!connected)
+        std::string row = "[Left Glove]-[" + datetime + "]: ";
+        size_t totalCnt = sizeof(data->LGlove)/sizeof(uint16_t);
+        size_t jointCnt = totalCnt - 3;
+        uint32_t errorMask = (data->LGlove[totalCnt-2] << 16) | data->LGlove[totalCnt-1];
+        for (int i=0; i < jointCnt; ++i)
+        {
+            if(errorMask & FingersErrorMask[i])
             {
-                printf("网络连接失败, 是否重试? Y/n\n");
-                printf("DexCap> ");
-                const auto cmd = CmdReadLine();
-                if(strlen(cmd) == 0)
-                {
-                    free(cmd);
-                    continue;
-                }
-
-                std::string action(cmd);
-                free(cmd);
-                if(action != "Y" && action != "y")
-                {
-                    break;
-                }
+                row += "Joint" + std::to_string(i+1) + "=ERR, ";
             }
             else
             {
-                connected = true;
-                printf("网络服务器连接成功\n");
+                row += "Joint" + std::to_string(i+1) + "=" + std::to_string((double)data->LGlove[i]/100) + ", ";
             }
-        } while(!connected);
+        }
+
+        logFile << row << std::endl;
     }
 
-    if(bodyEnabled)
+    if (data->mask & 0x4000)
     {
-        if(!dexcap.InitBody(bAdapterType, bAdapterName.c_str(), bDeviceId))
+        std::string row = "[Exo UpBody]-[" + datetime + "]: ";
+        size_t totalCnt = sizeof(data->ExBody)/sizeof(uint16_t);
+        size_t jointCnt = totalCnt - 1;
+        uint16_t batterState = data->ExBody[totalCnt-1];
+        for (int i=0; i < jointCnt; ++i)
         {
-            printf("背部外骨骼连接失败\n");
+            printf("Joint%d: %.2f, ", i+1, (double)data->ExBody[i]/100);
+            row += "Joint" + std::to_string(i+1) + "=" + std::to_string((double)data->ExBody[i]/100) + ", ";
         }
-        else
-        {
-            printf("背部外骨骼连接成功\n");
-            if(bDebug)
-                dexcap.SetBodyLogLevel(DexRobot::LOG_LEVEL::DX_DEBUG);
-        }
+        logFile << row << std::endl;
     }
 
-    if(lHandEnabled)
+    if (data->mask & 0x2000)
     {
-        if(!dexcap.InitLeftHand(lAdapterType, lAdapterName.c_str(), lDeviceId))
+        std::string row = "[Right Glove]-[" + datetime + "]: ";
+        size_t totalCnt = sizeof(data->RGlove)/sizeof(uint16_t);
+        size_t jointCnt = totalCnt - 3;
+        uint32_t errorMask = (data->LGlove[totalCnt-2] << 8) | data->LGlove[totalCnt-1];
+        for (int i=0; i < jointCnt; ++i)
         {
-            printf("左手连接失败\n");
+            if(errorMask & FingersErrorMask[i])
+            {
+                row += "Joint" + std::to_string(i+1) + "=ERR, ";
+            }
+            else
+            {
+                row += "Joint" + std::to_string(i+1) + "=" + std::to_string((double)data->RGlove[i]/100) + ", ";
+            }
         }
-        else
-        {
-            printf("左手连接成功\n");
-            if(lDebug)
-                dexcap.SetLeftHandLogLevel(DexRobot::LOG_LEVEL::DX_DEBUG);
-        }
+
+        logFile << row << std::endl;
     }
 
-    if(rHandEnabled)
+    logFile << std::endl;
+}
+
+void RunDexCapExample(int seconds=30)
+{
+    const auto device_list = alloc_serial_port_device_list();
+    size_t device_count = 0;
+    enumerate_serial_port_devices(ProductVersion::V4, device_list, &device_count);
+    DexCapSuit dexCapSuit(ProductVersion::V4);
+    dexCapSuit.registerStatusDataProc(SensorDataCallback);
+
+    for (int i=0; i < device_count; ++i)
     {
-        if(!dexcap.InitRightHand(rAdapterType, rAdapterName.c_str(), rDeviceId))
-        {
-            printf("右手连接失败\n");
-        }
-        else
-        {
-            printf("右手连接成功\n");
-            if(rDebug)
-                dexcap.SetRightHandLogLevel(DexRobot::LOG_LEVEL::DX_DEBUG);
-        }
-    }
-    // std::this_thread::sleep_for(std::chrono::seconds(2));
+        const auto deviceType = dexCapSuit.ConnectDevice(device_list[i].serial_port_name, AdapterType::WIREDUSB);
 
+        if (deviceType == ExoApparatus::UnDefn)
+        {
+            std::cout << "Device connection failed: " << device_list[i].serial_port_name << std::endl;
+        }
+
+        auto deviceId = dexCapSuit.GetDeviceID(deviceType);
+        std::cout << "Device device ID: " << static_cast<int>(deviceId) << std::endl;
+
+        auto connState = dexCapSuit.IsConnected(deviceType);
+        std::cout << "Device connection status: " << (connState ? "Connected" : "Disconnected") << std::endl;
+
+        auto fmwVersion = dexCapSuit.GetFirmwareVersion(deviceType);
+        std::cout << "Device firmware version: " << fmwVersion << std::endl;
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+
+    const auto startTs = current_timestamp();
+    const std::string logFileName = "./sensor_data_stream-" + timestamp_to_datetime_string(startTs) + ".log";
+    logFile.open(logFileName, std::ios_base::out | std::ios_base::app);
+    std::cout << "Output log file: " << logFileName << std::endl;
+
+    dexCapSuit.Start();
+
+    bool timeout = false;
+    do {
+        /// Run for 1 minute
+        timeout = current_timestamp() - startTs >= seconds*1000;
+    } while (!timeout);
+
+    dexCapSuit.Close();
+    logFile.close();
+}
+
+int main(int argc, const char ** argv)
+{
     printf("退出请输入quit\n");
     do {
         printf("DexCap> ");
@@ -175,41 +184,25 @@ int main(int argc, const char ** argv)
             break;
         }
 
-        if(strcasecmp(cmd, "mark") == 0)
+        std::string strCmd = cmd;
+        if (strCmd.starts_with("run"))
         {
-            if(lHandEnabled)
-                dexcap.CalibrateLeftHandInitPosition();
+            int seconds = 30;
+            std::vector<std::string> args;
+            split(args, strCmd, " ");
+            if (args.size() >= 2)
+                seconds = std::stoi(args[1]);
 
-            if(rHandEnabled)
-                dexcap.CalibrateRightHandInitPosition();
+            RunDexCapExample(seconds);
         }
-
-        if(strcasecmp(cmd, "vibe on") == 0)
+        else
         {
-            if(lHandEnabled)
-                dexcap.VibeMotors(DexRobot::ExoApparatus::LGlove, {50, 50, 50, 50, 50});
-
-            if(rHandEnabled)
-                dexcap.VibeMotors(DexRobot::ExoApparatus::RGlove, {50, 50, 50, 50, 50});
-        }
-
-        if(strcasecmp(cmd, "vibe off") == 0)
-        {
-            if(lHandEnabled)
-                dexcap.VibeMotors(DexRobot::ExoApparatus::LGlove, {0, 0, 0, 0, 0});
-
-            if(rHandEnabled)
-                dexcap.VibeMotors(DexRobot::ExoApparatus::RGlove, {0, 0, 0, 0, 0});
+            std::cout << "[Usage]: To run data sampling demo on DexCap devices, please use command below:" << std::endl;
+            std::cout << "[Demo]: run [seconds]" << std::endl;
         }
 
         free(cmd);
     } while(true);
-
-    // if(strcasecmp(argv[1], "-c") == 0)
-    //     RunUsbCable();
-    //
-    // if(strcasecmp(argv[1], "-w") == 0)
-    //     RunWireless();
 
     return 0;
 }

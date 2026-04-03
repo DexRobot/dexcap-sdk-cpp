@@ -23,7 +23,10 @@ typedef enum
     DEX_ERROR = -1,
     DEX_INVALID_DEVICE = -2,
     DEX_INVALID_INSTANCE = -3,
+    DEX_INVALID_DATA_FMT = -4,
+    DEX_DEV_TYPE_MISMATCH = -5,
 
+    ///
     DEX_SUCCESS = 0,
     DEX_SUCCESS_WITH_INFO = 1,
     DEX_NO_DATA = 100,
@@ -44,7 +47,7 @@ typedef enum
     // 02 - FF, firmware errors most
     ERROR_INVALID_MODE = 0x02,
     ERROR_INVALID_LENG = 0x03,
-    ERROR_INVALID_DATA = 0x04,
+    ERROR_DATA_INVALID = 0x04,
     ERROR_UN_PERMITTED = 0x05,
     ERROR_OUT_OF_RANGE = 0x06,
     ERROR_NVS_W_FAILED = 0x07,
@@ -71,7 +74,7 @@ typedef enum
     WIRELESS  = 0x02,
     COMMONUSB = 0x03,     // Reserved for internal use, useless for common user
     BLUETOOTH = 0x04,
-} AdapterType;
+} ADAPTER_TYPE;
 
 typedef enum
 {

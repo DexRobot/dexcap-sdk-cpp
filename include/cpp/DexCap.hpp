@@ -14,6 +14,7 @@ using namespace LibSerial;
 #endif
 
 #include "TypeDef.hpp"
+#include "Utils.hpp"
 
 namespace DexRobot
 {

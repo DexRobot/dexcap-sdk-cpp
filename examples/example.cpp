@@ -126,7 +126,7 @@ void RunDexCapExample(int seconds=30)
     size_t device_count = 0;
     enumerate_serial_port_devices(ProductVersion::V4, device_list, &device_count);
     DexCapSuit dexCapSuit(ProductVersion::V4);
-    dexCapSuit.registerStatusDataProc(SensorDataCallback);
+    // dexCapSuit.registerStatusDataProc(SensorDataCallback);
 
     for (int i=0; i < device_count; ++i)
     {
@@ -150,9 +150,9 @@ void RunDexCapExample(int seconds=30)
     }
 
     const auto startTs = current_timestamp();
-    const std::string logFileName = "./sensor_data_stream-" + timestamp_to_datetime_string(startTs) + ".log";
-    logFile.open(logFileName, std::ios_base::out | std::ios_base::app);
-    std::cout << "Output log file: " << logFileName << std::endl;
+    // const std::string logFileName = "./sensor_data_stream-" + timestamp_to_datetime_string(startTs) + ".log";
+    // logFile.open(logFileName, std::ios_base::out | std::ios_base::app);
+    // std::cout << "Output log file: " << logFileName << std::endl;
 
     dexCapSuit.Start();
 

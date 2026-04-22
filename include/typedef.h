@@ -7,7 +7,7 @@
 #define PACK( __Declaration__ ) __Declaration__// __attribute__((__packed__))
 #endif
 
-#ifdef __MSC_VER
+#ifdef _MSC_VER
 #define PACK( __Declaration__ ) __pragma( pack(push, 1) ) __Declaration__ __pragma( pack(pop) )
 #endif
 
@@ -74,6 +74,7 @@ typedef enum
     WIRELESS  = 0x02,
     COMMONUSB = 0x03,     // Reserved for internal use, useless for common user
     BLUETOOTH = 0x04,
+    MODBUSUSB = 0x05,     //sxl add.(Currently only for imu)
 } ADAPTER_TYPE;
 
 typedef enum
@@ -144,18 +145,31 @@ PACK(typedef struct SkeletonJointAngles_t
     uint16_t Back3;
     uint16_t Back4;
     uint16_t Back5;
-    uint16_t BatteryState;
+    uint16_t Reserved;
     uint64_t timestamp;
 } SkeletonJointAngles);
+
+PACK(typedef struct MainBatteryState_t
+{
+    int16_t  Currency; // Positive for charging, negative for discharging, in mA
+    uint16_t Voltage;  // As in mV
+    uint16_t RemainPower;  // Percentage of remaining power
+    uint16_t Temperature;  // As in centigrade value divided by 10
+    uint16_t StatusBitmap;
+} MainBatteryState);
 
 PACK(typedef struct InertialUnitData_t
 {
     double roll;
     double pitch;
     double yaw;
-    double accel[3];  // accelerometer (x, y, z)
-    double gyscp[3];  // gyroscope (x, y, z)
-    double magnt[3];  // magnetometer (x, y, z)
+    double quat[4];     // quaternion
+    double accel[3];    // accelerometer (x, y, z)
+    double gyscp[3];    // gyroscope (x, y, z)
+    double magnt[3];    // magnetometer (x, y, z)
+    double air_pressure; // air pressure
+    double temp;         // Temperature
+    uint32_t system_time;//system time
     uint64_t timestamp;
 } InertialUnitData);
 
@@ -165,7 +179,7 @@ PACK(typedef struct DexCapJointData_t
     uint16_t LGlove[24];
     uint16_t ExBody[24];
     uint16_t RGlove[24];
-    double   InetMU[15];
+    double   InetMU[19];
     uint64_t timestamp;
 } DexCapJointData);
 

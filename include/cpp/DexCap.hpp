@@ -7,6 +7,7 @@
 #include <future>
 
 #ifdef WIN32
+#include <WinSock2.h>
 #include <Windows.h>
 #else
 #include <libserial/SerialPort.h>
@@ -94,8 +95,10 @@ public:
     const SkeletonJointAngles & GetBodyJointState() const;
     const GloveJointAngles & GetLeftGloveJointState() const;
     const GloveJointAngles & GetRightGloveJointState() const;
+    const InertialUnitData & GetInertialMUJointState() const;//sxl add.
 
     uint16_t GetBatteryLevel(ExoApparatus device) const;
+    const MainBatteryState *GetMainBatteryState() const;
 
     void VibeMotors(ExoApparatus hand, const std::vector<uint8_t> &) const;
     std::string GetFirmwareVersion(ExoApparatus device) const;

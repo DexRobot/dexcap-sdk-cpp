@@ -44,6 +44,7 @@ DEX_RETURN dexcap_stop_device_sampling(DEXCAP_SUIT_HANDLE hSuit, DEXCAP_DEVICE_T
 DEX_RETURN dexcap_get_l_glove_data(DEXCAP_SUIT_HANDLE hSuit, GloveJointAngles *jointData);
 DEX_RETURN dexcap_get_r_glove_data(DEXCAP_SUIT_HANDLE hSuit, GloveJointAngles *jointData);
 DEX_RETURN dexcap_get_ex_body_data(DEXCAP_SUIT_HANDLE hSuit, SkeletonJointAngles *jointData);
+DEX_RETURN dexcap_get_im_unit_data(DEXCAP_SUIT_HANDLE hSuit, InertialUnitData *imuData);
 DEX_RETURN dexcap_get_joint_data(DEXCAP_SUIT_HANDLE hSuit, DexCapJointData *jointData);
 
 DEX_RETURN register_joint_data_callback(DEXCAP_SUIT_HANDLE hSuit, DexCapJointDataProc callback);

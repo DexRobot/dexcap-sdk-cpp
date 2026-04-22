@@ -55,11 +55,13 @@ struct DexCapErrorInfo
 struct SuitJointState
 {
     DexCapJointData jointData;
+    MainBatteryState mainBatteryState;
 
     SuitJointState();
     SuitJointState(GloveJointAngles *lg,
         GloveJointAngles *rg,
         SkeletonJointAngles *bd,
+        MainBatteryState * bat,
         InertialUnitData * imu=nullptr);
     SuitJointState(const SuitJointState &) noexcept;
     SuitJointState(SuitJointState &&) noexcept;

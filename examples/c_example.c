@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "dexcap.h"
+#include "example_defs.h"
 
 #ifndef BOOL
 #define BOOL int
@@ -23,34 +24,6 @@
 #define FALSE 0
 #endif
 
-int FingersErrorMask[] = {
-    0x80000000, // Thumb DIP Error Bit
-    0x40000000, // Thumb PIP Error Bit
-    0x20000000, // Thumb MCP Error Bit
-    0x10000000, // Thumb SWP Error Bit
-    0x8000000,  // Thumb ROP Error Bit
-    0x4000000,  // Index DIP Error Bit
-    0x2000000,  // Index PIP Error Bit
-    0x1000000,  // Index MCP Error Bit
-    0x800000,   // Index SWP Error Bit
-    0x400000,   // Middle DIP Error Bit
-    0x200000,   // Middle PIP Error Bit
-    0x100000,   // Middle MCP Error Bit
-    0x80000,    // Middle SWP Error Bit
-    0x40000,    // Ring DIP Error Bit
-    0x20000,    // Ring PIP Error Bit
-    0x10000,    // Ring MCP Error Bit
-    0x8000,     // Ring SWP Error Bit
-    0x4000,     // Little DIP Error Bit
-    0x2000,     // Little PIP Error Bit
-    0x1000,     // Little MCP Error Bit
-    0x800,      // Little SWP Error Bit
-    0x80,       // Thumb Vide Motor Error Bit
-    0x40,       // Index Vide Motor Error Bit
-    0x20,       // Middle Vide Motor Error Bit
-    0x10,       // Ring Vide Motor Error Bit
-    0x8,        // Little Vide Motor Error Bit
-};
 
 void JointDataCallback(const DexCapJointData * data)
 {
@@ -115,6 +88,15 @@ void JointDataCallback(const DexCapJointData * data)
     if (data->mask & 0x1000)
     {
         /// TODO: Not implemented yet
+        printf("[IMU]:");
+        printf("Euler Angles:[%.3f,%.3f,%.3f],Quaternion[%.3f,%.3f,%.3f,%.3f],Accel:[%.3f,%.3f,%.3f],Gyroscope:[%.3f, %.3f, %.3f],Magnet:[%.3f,%.3f,%.3f],air_pressure:%.3f,Temperature:%.2f\n",
+            data->InetMU[0], data->InetMU[1], data->InetMU[2],
+            data->InetMU[3], data->InetMU[4], data->InetMU[5], data->InetMU[6],
+            data->InetMU[7], data->InetMU[8], data->InetMU[9],
+            data->InetMU[10], data->InetMU[11], data->InetMU[12],
+            data->InetMU[13], data->InetMU[14], data->InetMU[15],
+            data->InetMU[16], data->InetMU[17]);
+        printf("\n");
     }
 }
 
@@ -157,11 +139,3 @@ BOOL CInterfaceTest()
 
     return TRUE;
 }
-
-int main(int argc, const char ** argv)
-{
-    CInterfaceTest();
-
-    return 0;
-}
-

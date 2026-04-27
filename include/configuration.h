@@ -12,12 +12,47 @@
 #endif
 
 #include <yaml-cpp/yaml.h>
+#include "cpp/TypeDef.hpp"
 
-#include "typedef.h"
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
+#define MAX_UDEV_PORT_NAME_LENG 16
+
+typedef struct dexcap_device_serial_port_info
+{
+    uint8_t device_type;
+    char serial_port_name[MAX_UDEV_PORT_NAME_LENG];
+} serial_port_device_info;
+
+struct dexcap_device_serial_port_info * alloc_serial_port_device_list();
+void free_serial_port_device_list(dexcap_device_serial_port_info * device_list);
+void enumerate_serial_port_devices(ProductVersion prod_ver, dexcap_device_serial_port_info * device_list, size_t * count);
+
+#ifdef __cplusplus
+}
+#endif
 
 namespace DexRobot
 {
+
+struct DEV_SERIAL_PORT_INFO_V3
+{
+    static const char * GLOVE_UDEV_VID;
+    static const char * GLOVE_UDEV_PID;
+    static const char * UBODY_UDEV_VID;
+    static const char * UBODY_UDEV_PID;
+};
+
+struct DEV_SERIAL_PORT_INFO_V4
+{
+    static const char * GLOVE_UDEV_VID;
+    static const char * GLOVE_UDEV_PID;
+    static const char * UBODY_UDEV_VID;
+    static const char * UBODY_UDEV_PID;
+};
 
 class DexCapConfig final
 {
@@ -54,6 +89,11 @@ public:
     bool IsBodyEnabled() const;
     bool IsLeftHandEnabled() const;
     bool IsRightHandEnabled() const;
+
+    DEXCAP_DEVICE_TYPE GetDexCapDeviceType(const std::string & adapterName) const;
+    uint8_t GetDexCapDeviceID(const std::string & adapterName) const;
+    AdapterType GetAdapterType(const std::string & adapterName) const;
+    uint8_t GetDexHandType(const std::string & adapterName) const;
 
 #ifndef WIN32
     LibSerial::BaudRate GetBodyBaudRate() const;

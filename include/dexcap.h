@@ -32,11 +32,15 @@ DEX_RETURN dexcap_create_suit_instance(DEXCAP_SUIT_HANDLE * hSuit);
 DEX_RETURN dexcap_connect_suit_device(DEXCAP_SUIT_HANDLE hSuit, const char * devicePath,
     DEXCAP_DEVICE_TYPE * deviceType, ADAPTER_TYPE adapterType);
 
+BOOL dexcap_is_device_connected(DEXCAP_SUIT_HANDLE hSuit, ADAPTER_TYPE adapterType);
+
 DEX_RETURN dexcap_disconnect_all_devices(DEXCAP_SUIT_HANDLE hSuit);
 DEX_RETURN dexcap_disconnect_suit_device(DEXCAP_SUIT_HANDLE hSuit, DEXCAP_DEVICE_TYPE deviceType);
 
 DEX_RETURN dexcap_start_suit_sampling(DEXCAP_SUIT_HANDLE hSuit);
 DEX_RETURN dexcap_start_device_sampling(DEXCAP_SUIT_HANDLE hSuit, DEXCAP_DEVICE_TYPE deviceType);
+
+BOOL dexcap_is_device_sampling(DEXCAP_SUIT_HANDLE hSuit, ADAPTER_TYPE adapterType);
 
 DEX_RETURN dexcap_stop_suit_sampling(DEXCAP_SUIT_HANDLE hSuit);
 DEX_RETURN dexcap_stop_device_sampling(DEXCAP_SUIT_HANDLE hSuit, DEXCAP_DEVICE_TYPE deviceType);
@@ -46,6 +50,10 @@ DEX_RETURN dexcap_get_r_glove_data(DEXCAP_SUIT_HANDLE hSuit, GloveJointAngles *j
 DEX_RETURN dexcap_get_ex_body_data(DEXCAP_SUIT_HANDLE hSuit, SkeletonJointAngles *jointData);
 DEX_RETURN dexcap_get_im_unit_data(DEXCAP_SUIT_HANDLE hSuit, InertialUnitData *imuData);
 DEX_RETURN dexcap_get_joint_data(DEXCAP_SUIT_HANDLE hSuit, DexCapJointData *jointData);
+
+DEX_RETURN dexcap_get_l_battery_state(DEXCAP_SUIT_HANDLE hSuit, uint16_t * voltage);
+DEX_RETURN dexcap_get_r_battery_state(DEXCAP_SUIT_HANDLE hSuit, uint16_t * voltage);
+DEX_RETURN dexcap_get_main_battery_state(DEXCAP_SUIT_HANDLE hSuit, MainBatteryState *batteryState);
 
 DEX_RETURN register_joint_data_callback(DEXCAP_SUIT_HANDLE hSuit, DexCapJointDataProc callback);
 

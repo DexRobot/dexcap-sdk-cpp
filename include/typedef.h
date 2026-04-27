@@ -16,6 +16,27 @@ extern "C"
 {
 #endif
 
+#ifndef BOOL
+#define BOOL int
+#else
+#undef BOOL
+#define BOOL int
+#endif
+
+#ifndef TRUE
+#define TRUE 1
+#else
+#undef TRUE
+#define TRUE 1
+#endif
+
+#ifndef FALSE
+#define FALSE 0
+#else
+#undef FALSE
+#define FALSE 0
+#endif
+
 #define DEXCAP_SUIT_HANDLE void *
 
 typedef enum
@@ -29,6 +50,7 @@ typedef enum
     ///
     DEX_SUCCESS = 0,
     DEX_SUCCESS_WITH_INFO = 1,
+    DEX_REQUEST_TIMEOUT = 2,
     DEX_NO_DATA = 100,
 } DEX_RETURN;
 
@@ -74,7 +96,7 @@ typedef enum
     WIRELESS  = 0x02,
     COMMONUSB = 0x03,     // Reserved for internal use, useless for common user
     BLUETOOTH = 0x04,
-    MODBUSUSB = 0x05,     //sxl add.(Currently only for imu)
+    MODBUSUSB = 0x06,     //sxl add.(Currently only for imu)
 } ADAPTER_TYPE;
 
 typedef enum

@@ -3,27 +3,11 @@
 #include "dexcap.h"
 #include "example_defs.h"
 
-#ifndef BOOL
-#define BOOL int
+#ifndef WIN32
+#include <unistd.h>
 #else
-#undef BOOL
-#define BOOL int
+#include <windows.h>
 #endif
-
-#ifndef TRUE
-#define TRUE 1
-#else
-#undef TRUE
-#define TRUE 1
-#endif
-
-#ifndef FALSE
-#define FALSE 0
-#else
-#undef FALSE
-#define FALSE 0
-#endif
-
 
 void JointDataCallback(const DexCapJointData * data)
 {
@@ -110,12 +94,21 @@ BOOL CInterfaceTest()
         return FALSE;
     }
 
-    DEXCAP_DEVICE_TYPE deviceType;
-    const char * devicePath = "/dev/ttyUSB1";
-    retCode = dexcap_connect_suit_device(hSuit, devicePath, &deviceType, WIREDUSB);
-    if (retCode == DEX_INVALID_DEVICE || deviceType == UnDefn)
+    DEXCAP_DEVICE_TYPE deviceType0;
+    DEXCAP_DEVICE_TYPE deviceType1;
+    const char * devicePath0 = "/dev/ttyUSB0"; // Assume this is one of my glove
+    const char * devicePath1 = "/dev/ttyACM1"; // Assume this is the exo-skeleton body frame
+    retCode = dexcap_connect_suit_device(hSuit, devicePath0, &deviceType0, WIREDUSB);
+    if (retCode == DEX_INVALID_DEVICE || deviceType0 == UnDefn)
     {
-        fprintf(stderr, "Device at given path %s is not a recognized device type of DexCap\n", devicePath);
+        fprintf(stderr, "Device at given path %s is not a recognized device type of DexCap\n", devicePath0);
+        return FALSE;
+    }
+
+    retCode = dexcap_connect_suit_device(hSuit, devicePath1, &deviceType1, WIREDUSB);
+    if (retCode == DEX_INVALID_DEVICE || deviceType1 == UnDefn)
+    {
+        fprintf(stderr, "Device at given path %s is not a recognized device type of DexCap\n", devicePath1);
         return FALSE;
     }
 
@@ -125,17 +118,65 @@ BOOL CInterfaceTest()
         return FALSE;
     }
 
-    retCode = dexcap_start_device_sampling(hSuit, deviceType);
-    if (retCode != DEX_SUCCESS)
+    retCode = dexcap_start_suit_sampling(hSuit);
+    if (retCode == DEX_ERROR)
     {
-        fprintf(stderr, "Failed to start sampling on device %s\n", devicePath);
+        fprintf(stderr, "Failed to start sampling for DexCap Suit\n");
         return FALSE;
     }
 
-    while (TRUE)
+    if (retCode == DEX_SUCCESS_WITH_INFO)
     {
-        /// Do something or just leave it this way to keep process running.
+        fprintf(stderr, "Failed to start sampling on one of the devices\n");
     }
 
+    int count = 0;
+    MainBatteryState mainBatteryState;
+    do {
+        retCode = dexcap_get_main_battery_state(hSuit, &mainBatteryState);
+        if (retCode == DEX_SUCCESS)
+        {
+            printf("[Main Battery State]: CURR=%d, VOLT=%f, PWRM=%d, TEMP=%f\n",
+                mainBatteryState.Currency,
+                (float)mainBatteryState.Voltage / 1000,
+                mainBatteryState.RemainPower,
+                (float)mainBatteryState.Temperature / 10);
+        }
+
+        if (dexcap_is_device_connected(hSuit, LGlove))
+        {
+            uint16_t batVoltage = 0;
+            retCode = dexcap_get_l_battery_state(hSuit, &batVoltage);
+            if (retCode == DEX_SUCCESS && batVoltage < 3500)
+            {
+                printf("LGlove is running out of battery, please charge via main battery on ExoSkeleton."
+                    " The operatio needs to be done on DexCapGUI application.\n");
+            }
+        }
+
+        if (dexcap_is_device_connected(hSuit, RGlove))
+        {
+            uint16_t batVoltage = 0;
+            retCode = dexcap_get_l_battery_state(hSuit, &batVoltage);
+            if (retCode == DEX_SUCCESS && batVoltage < 3500)
+            {
+                printf("RGlove is running out of battery, please charge via main battery on ExoSkeleton."
+                    " The operatio needs to be done on DexCapGUI application.\n");
+            }
+        }
+
+#ifndef WIN32
+        sleep(5);
+#else
+        Sleep(5000);
+#endif
+        count++;
+    } while (count < 12);
+
     return TRUE;
+}
+
+int main(int argc, const char **argv)
+{
+    CInterfaceTest();
 }

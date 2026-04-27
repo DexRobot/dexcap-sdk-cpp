@@ -134,6 +134,8 @@ private:
     std::shared_ptr<DexIMUnit> imUnit;
     std::shared_ptr<Socket> network;
 
+    std::map<ExoApparatus, ErrorCode> lastError;
+
     DexCapStatusDataProc statusDataProc;
     DexCapDataHandler * dataHandler;
 

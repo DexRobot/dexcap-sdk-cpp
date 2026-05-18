@@ -15,6 +15,15 @@ using namespace DexRobot;
 
 bool start_flag=true;
 
+
+static const std::map<ExoApparatus, std::string> DEVICE_NAMES = {
+    { LGlove, "左手套" },
+    { RGlove, "右手套" },
+    { UpBody, "外骨骼" },
+    { IMUnit, "陀螺仪" },
+};
+
+
 char * CmdReadLine(void)
 {
     int bufsize = 128;
@@ -120,13 +129,13 @@ void SensorDataCallback(const DexCapJointData * data)
     logFile << std::endl;
 }
 
-void RunDexCapExample(int seconds=30)
+void RunDexCapExample(int seconds=30 /* Run for secdons */)
 {
     const auto device_list = alloc_serial_port_device_list();
     size_t device_count = 0;
     enumerate_serial_port_devices(ProductVersion::V4, device_list, &device_count);
     DexCapSuit dexCapSuit(ProductVersion::V4);
-    // dexCapSuit.registerStatusDataProc(SensorDataCallback);
+    dexCapSuit.registerStatusDataProc(SensorDataCallback);
 
     for (int i=0; i < device_count; ++i)
     {
@@ -135,31 +144,72 @@ void RunDexCapExample(int seconds=30)
         if (deviceType == ExoApparatus::UnDefn)
         {
             std::cout << "Device connection failed: " << device_list[i].serial_port_name << std::endl;
+            continue;
         }
 
+        const auto it = DEVICE_NAMES.find(deviceType);
+        if (it == DEVICE_NAMES.end())
+            continue;
+
         auto deviceId = dexCapSuit.GetDeviceID(deviceType);
-        std::cout << "Device device ID: " << static_cast<int>(deviceId) << std::endl;
+        std::cout << "Device device ID: " << static_cast<int>(deviceId)
+        << ". Device Name: " << it->second << std::endl;
 
         auto connState = dexCapSuit.IsConnected(deviceType);
-        std::cout << "Device connection status: " << (connState ? "Connected" : "Disconnected") << std::endl;
+        std::cout << "Device connection status: " << (connState ? "Connected" : "Disconnected")
+            << " on " << device_list[i].serial_port_name << std::endl;
 
         auto fmwVersion = dexCapSuit.GetFirmwareVersion(deviceType);
         std::cout << "Device firmware version: " << fmwVersion << std::endl;
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 
     const auto startTs = current_timestamp();
-    // const std::string logFileName = "./sensor_data_stream-" + timestamp_to_datetime_string(startTs) + ".log";
-    // logFile.open(logFileName, std::ios_base::out | std::ios_base::app);
-    // std::cout << "Output log file: " << logFileName << std::endl;
+    const std::string logFileName = "./sensor_data_stream-" + timestamp_to_datetime_string(startTs) + ".log";
+    logFile.open(logFileName, std::ios_base::out | std::ios_base::app);
+    std::cout << "Output log file: " << logFileName << std::endl;
 
     dexCapSuit.Start();
 
     bool timeout = false;
+    uint64_t lastTimestamp = current_timestamp();
     do {
-        /// Run for 1 minute
-        timeout = current_timestamp() - startTs >= seconds*1000;
+        const auto & endPoses = dexCapSuit.GetEndPose();
+        if (lastTimestamp == endPoses.timestamp)
+            continue;
+
+        lastTimestamp = endPoses.timestamp;
+        const auto timeStr = timestamp_to_datetime_string(lastTimestamp);
+        printf("[%s]:\n", timeStr.c_str());
+        printf("Left Arm:\n[\n");
+        for (const auto & row : endPoses.LArm)
+        {
+            printf("  [");
+            for (const auto & pose : row)
+            {
+                printf("%f, ", pose);
+            }
+            printf("  ]\n");
+        }
+        printf("]\n");
+
+        printf("Right Arm:\n[\n");
+        for (const auto & row : endPoses.RArm)
+        {
+            printf("  [");
+            for (const auto & pose : row)
+            {
+                printf("%f, ", pose);
+            }
+            printf("  ]\n");
+        }
+        printf("]\n");
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        const auto currentTs = current_timestamp();
+        const auto duration = currentTs - startTs;
+        timeout = duration >= seconds * 1000;
     } while (!timeout);
 
     dexCapSuit.Close();

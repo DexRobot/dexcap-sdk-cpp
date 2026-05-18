@@ -40,7 +40,7 @@ DEX_RETURN dexcap_disconnect_suit_device(DEXCAP_SUIT_HANDLE hSuit, DEXCAP_DEVICE
 DEX_RETURN dexcap_start_suit_sampling(DEXCAP_SUIT_HANDLE hSuit);
 DEX_RETURN dexcap_start_device_sampling(DEXCAP_SUIT_HANDLE hSuit, DEXCAP_DEVICE_TYPE deviceType);
 
-BOOL dexcap_is_device_sampling(DEXCAP_SUIT_HANDLE hSuit, ADAPTER_TYPE adapterType);
+BOOL dexcap_is_device_sampling(DEXCAP_SUIT_HANDLE hSuit, DEXCAP_DEVICE_TYPE adapterType);
 
 DEX_RETURN dexcap_stop_suit_sampling(DEXCAP_SUIT_HANDLE hSuit);
 DEX_RETURN dexcap_stop_device_sampling(DEXCAP_SUIT_HANDLE hSuit, DEXCAP_DEVICE_TYPE deviceType);

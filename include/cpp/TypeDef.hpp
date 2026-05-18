@@ -1,9 +1,7 @@
-//
-// Created by ryzuo on 25-8-20.
-//
 #pragma once
 
 #include <cstdint>
+#include <array>
 #include "typedef.h"
 
 #ifdef _WIN32

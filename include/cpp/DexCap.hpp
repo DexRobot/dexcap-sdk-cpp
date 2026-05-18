@@ -27,6 +27,7 @@ class DexoBody;
 class DexIMUnit;
 class BluetoothDriver;
 class DexCapDataHandler;
+class ForwardKinematics;
 
 typedef DEXCAP_DEVICE_TYPE ExoApparatus;
 
@@ -60,61 +61,66 @@ public:
     virtual bool DisconnectDevice(const std::string & adapterName);
     virtual bool DisconnectDevice(ExoApparatus device);
 
-    std::string GetAdapterName(ExoApparatus device) const;
+    [[nodiscard]] std::string GetAdapterName(ExoApparatus device) const;
 
     bool InitNetwork(const std::string & serverAddr, int serverPort, NetProtocolType netType);
 
     ProductVersion & productVersion();
-    const ProductVersion & productVersion() const;
-    uint8_t GetDeviceID(ExoApparatus device) const;
+    [[nodiscard]] const ProductVersion & productVersion() const;
+    [[nodiscard]] uint8_t GetDeviceID(ExoApparatus device) const;
 
     std::string getSerialNumber(ExoApparatus device);
 
     DEX_RETURN Start();
-    bool Start(ExoApparatus device) const;
+    [[nodiscard]] bool Start(ExoApparatus device) const;
 
-    bool IsConnected(ExoApparatus device);
+    [[nodiscard]] bool IsConnected(ExoApparatus device);
+    [[nodiscard]] bool IsSensorEnabled(ExoApparatus device) const;
+    [[nodiscard]] bool IsBluetoothConnected(ExoApparatus device) const;
+    [[nodiscard]] bool IsChargeNeeded(ExoApparatus device) const;
 
-    bool IsRunning() const;
-    bool IsRunning(ExoApparatus device) const;
+    [[nodiscard]] bool IsRunning() const;
+    [[nodiscard]] bool IsRunning(ExoApparatus device) const;
 
     DEX_RETURN Pause();
-    bool Pause(ExoApparatus device) const;
+    [[nodiscard]] bool Pause(ExoApparatus device) const;
 
     DEX_RETURN Resume();
-    bool Resume(ExoApparatus device) const;
+    [[nodiscard]] bool Resume(ExoApparatus device) const;
 
     DEX_RETURN Close();
     DEX_RETURN Close(ExoApparatus device);
 
-    AdapterType GetAdapterType() const;
+    [[nodiscard]] AdapterType GetAdapterType() const;
 
-    ExoApparatus GetDeviceType(const std::string & adapterName) const;
+    [[nodiscard]] ExoApparatus GetDeviceType(const std::string & adapterName) const;
 
-    const SuitJointState & GetSuitJointState() const;
-    const SkeletonJointAngles & GetBodyJointState() const;
-    const GloveJointAngles & GetLeftGloveJointState() const;
-    const GloveJointAngles & GetRightGloveJointState() const;
-    const InertialUnitData & GetInertialMUJointState() const;//sxl add.
+    [[nodiscard]] const SuitJointState & GetSuitJointState() const;
+    [[nodiscard]] const SkeletonJointAngles & GetBodyJointState() const;
+    [[nodiscard]] const GloveJointAngles & GetLeftGloveJointState() const;
+    [[nodiscard]] const GloveJointAngles & GetRightGloveJointState() const;
+    [[nodiscard]] const InertialUnitData & GetInertialMUJointState() const;//sxl add.
 
-    uint16_t GetBatteryLevel(ExoApparatus device) const;
-    const MainBatteryState *GetMainBatteryState() const;
+    [[nodiscard]] const DexCapEndPoses & GetEndPose() const;
+
+    [[nodiscard]] uint16_t GetBatteryLevel(ExoApparatus device) const;
+    [[nodiscard]] const MainBatteryState *GetMainBatteryState() const;
 
     void VibeMotors(ExoApparatus hand, const std::vector<uint8_t> &) const;
-    std::string GetFirmwareVersion(ExoApparatus device) const;
+    [[nodiscard]] std::string GetFirmwareVersion(ExoApparatus device) const;
 
-    bool anyError(ExoApparatus device) const;
-    ErrorCode getErrorCode(ExoApparatus device) const;
-    std::string getErrorMessage(ExoApparatus device) const;
+    [[nodiscard]] bool anyError(ExoApparatus device) const;
+    [[nodiscard]] ErrorCode getErrorCode(ExoApparatus device) const;
+    [[nodiscard]] std::string getErrorMessage(ExoApparatus device) const;
 
-    ErrorCode getErrorCode() const { return this->errCode; }
+    [[nodiscard]] ErrorCode getErrorCode() const { return this->errCode; }
     const std::string & getErrorMessage();
 
     void registerStatusDataProc(const DexCapStatusDataProc & callback);
 
 private:
-    std::pair<bool, const std::string> IsDeviceExists(ExoApparatus device) const;
-    bool IsDeviceExists(const std::string & adapterName) const;
+    [[nodiscard]] std::pair<bool, const std::string> IsDeviceExists(ExoApparatus device) const;
+    [[nodiscard]] bool IsDeviceExists(const std::string & adapterName) const;
 
     void RemoveDevice(ExoApparatus device);
     void RemoveDevice(const std::string & adapterName);
@@ -132,7 +138,7 @@ private:
     std::shared_ptr<DexGlove> rHand;
     std::shared_ptr<DexoBody> xBody;
     std::shared_ptr<DexIMUnit> imUnit;
-    std::shared_ptr<Socket> network;
+    std::unique_ptr<Socket> network;
 
     std::map<ExoApparatus, ErrorCode> lastError;
 
@@ -141,6 +147,7 @@ private:
 
     friend class DexCapSuitAdmin;
     friend class DexCapDataHandler;
+    friend class ForwardKinematics;
 };
 
 }

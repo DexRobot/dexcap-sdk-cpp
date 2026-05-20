@@ -175,15 +175,6 @@ int main(int argc, const char ** argv)
             break;
         }
 
-        if(strcasecmp(cmd, "mark") == 0)
-        {
-            if(lHandEnabled)
-                dexcap.CalibrateLeftHandInitPosition();
-
-            if(rHandEnabled)
-                dexcap.CalibrateRightHandInitPosition();
-        }
-
         if(strcasecmp(cmd, "vibe on") == 0)
         {
             if(lHandEnabled)

@@ -4,11 +4,23 @@ project(DexCapDemo)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "arm" OR "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "aarch64")
+    MESSAGE(STATUS "Platform: ARM architecture")
+    set(IS_ARM TRUE)
+else()
+    MESSAGE(STATUS "Platform: x86 architecture")
+    set(IS_ARM FALSE)
+endif()
+
 include_directories(${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/../include)
 
 if(UNIX)
-    set(DEP_LIB_DIR ${PROJECT_SOURCE_DIR}/../libs/linux)
-
+    if(IS_ARM)
+        set(DEP_LIB_DIR ${PROJECT_SOURCE_DIR}/../libs/linux/aarch64)
+    else()
+        set(DEP_LIB_DIR ${PROJECT_SOURCE_DIR}/../libs/linux/x86_64)
+    endif()
+    set(TARGET_DIR ${PROJECT_SOURCE_DIR}/bin/linux)
 else()
     set(YAML_CPP_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/external/include)
     set(YAMLCPP_DEBUG_LIB_DIR ${PROJECT_SOURCE_DIR}/external/Debug)
@@ -25,24 +37,8 @@ else()
     include_directories(${YAML_CPP_INCLUDE_DIR})
     link_directories(${YAML_CPP_LIB_DIR})
 
-endif()
-
-if(UNIX)
-    set(TARGET_DIR ${PROJECT_SOURCE_DIR}/bin/linux)
-else()
     set(TARGET_DIR ${PROJECT_SOURCE_DIR}/bin/windows)
 endif()
-
-
-file(GLOB SRC_FILES
-        ./src/common.cpp
-        ./src/arm.cpp
-        ./src/glove.cpp
-        ./src/network.cpp
-        ./src/exoskeleton.cpp
-        ./src/configuration.cpp
-        ./src/WirelessAdapter.cpp
-)
 
 ADD_EXECUTABLE(DexCapDemo example.cpp)
 

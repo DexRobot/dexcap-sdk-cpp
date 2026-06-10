@@ -130,6 +130,7 @@ protected:
     BluetoothDriver * bluetoothDriver;
     ErrorCode errCode;
     std::string errMsg;
+    std::string homeDir;
     std::string configureFile;
     std::map<std::string, std::shared_ptr<DexCapDevice>> adapterDeviceMap;
 

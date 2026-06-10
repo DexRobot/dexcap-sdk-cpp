@@ -46,29 +46,34 @@ typedef int BOOL;
 typedef enum
 {
     DEX_ERROR = -1,
-    DEX_INVALID_DEVICE = -2,
-    DEX_INVALID_INSTANCE = -3,
-    DEX_INVALID_DATA_FMT = -4,
+    DEX_INVALID_DEVICE    = -2,
+    DEX_INVALID_INSTANCE  = -3,
+    DEX_INVALID_DATA_FMT  = -4,
     DEX_DEV_TYPE_MISMATCH = -5,
 
     ///
-    DEX_SUCCESS = 0,
-    DEX_SUCCESS_WITH_INFO = 1,
-    DEX_REQUEST_TIMEOUT = 2,
-    DEX_NO_DATA = 100,
+    DEX_SUCCESS            = 0,
+    DEX_SUCCESS_WITH_INFO  = 1,
+    DEX_REQUEST_TIMEOUT    = 2,
+    DEX_SEC_ON_WITHOUT_KEY = 3,
+    DEX_BLE_CONN_UNSECURED = 4,
+    DEX_NO_DATA            = 100,
 } DEX_RETURN;
 
 typedef enum
 {
     // negative for SDK sys errors
-    ERROR_INVALID_IO   = -0x07,
-    ERROR_UNSUPPORTED  = -0x06,
-    ERROR_CONN_FAILURE = -0x05,
+    ERROR_BLE_UNSECURE   = -0x09,
+    ERROR_BLE_UNPAIRED   = -0x08,
+    ERROR_INVALID_IO     = -0x07,
+    ERROR_UNSUPPORTED    = -0x06,
+    ERROR_CONN_FAILURE   = -0x05,
     ERROR_BLE_UNRESOLVED = -0x04,
-    ERROR_AUTH_FAILURE = -0x03,
-    ERROR_INVALID_DEV  = -0x02,
-    ERROR_COMMON       = -0x01,
-    ERROR_NONE         = 0x00,
+    ERROR_AUTH_FAILURE   = -0x03,
+    ERROR_INVALID_DEV    = -0x02,
+    ERROR_COMMON         = -0x01,
+
+    ERROR_NONE           = 0x00,
 
     // 02 - FF, firmware errors most
     ERROR_INVALID_MODE = 0x02,

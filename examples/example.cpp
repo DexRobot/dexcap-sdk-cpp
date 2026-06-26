@@ -126,7 +126,7 @@ void RunDexCapExample(int seconds=30)
     size_t device_count = 0;
     enumerate_serial_port_devices(ProductVersion::V4, device_list, &device_count);
     DexCapSuit dexCapSuit(ProductVersion::V4);
-    // dexCapSuit.registerStatusDataProc(SensorDataCallback);
+    dexCapSuit.registerStatusDataProc(SensorDataCallback);
 
     for (int i=0; i < device_count; ++i)
     {
@@ -150,16 +150,48 @@ void RunDexCapExample(int seconds=30)
     }
 
     const auto startTs = current_timestamp();
-    // const std::string logFileName = "./sensor_data_stream-" + timestamp_to_datetime_string(startTs) + ".log";
-    // logFile.open(logFileName, std::ios_base::out | std::ios_base::app);
-    // std::cout << "Output log file: " << logFileName << std::endl;
+    const std::string logFileName = "./sensor_data_stream-" + timestamp_to_datetime_string(startTs) + ".log";
+    logFile.open(logFileName, std::ios_base::out | std::ios_base::app);
+    std::cout << "Output log file: " << logFileName << std::endl;
 
     dexCapSuit.Start();
 
     bool timeout = false;
     do {
-        /// Run for 1 minute
-        timeout = current_timestamp() - startTs >= seconds*1000;
+        const auto batteryState = dexCapSuit.GetMainBatteryState();
+        if (batteryState != nullptr)
+        {
+            std::cout << "[Main Battery State]: CURR=" << batteryState->Currency << "mA"
+                << ", VOLT=" << (float)batteryState->Voltage / 1000 << "V"
+                << ", PWRM=" << batteryState->RemainPower << "%"
+                << ", TEMP=" << (float)batteryState->Temperature / 10 << "℃"
+                << std::endl;
+        }
+
+        if (dexCapSuit.IsConnected(LGlove))
+        {
+            const auto batVoltage = dexCapSuit.GetBatteryLevel(LGlove);
+            if (batVoltage < 3500)
+            {
+                std::cout << "LGlove is running out of battery, please charge via main battery on ExoSkeleton." << std::endl
+                          << " The operatio needs to be done on DexCapGUI application." << std::endl;
+            }
+        }
+
+        if (dexCapSuit.IsConnected(RGlove))
+        {
+            const auto batVoltage = dexCapSuit.GetBatteryLevel(RGlove);
+            if (batVoltage < 3500)
+            {
+                std::cout << "RGlove is running out of battery, please charge via main battery on ExoSkeleton." << std::endl
+                          << " The operatio needs to be done on DexCapGUI application." << std::endl;
+            }
+        }
+
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+        const auto currentTs = current_timestamp();
+        const auto duration = currentTs - startTs;
+        timeout = duration >= seconds*1000;
     } while (!timeout);
 
     dexCapSuit.Close();
@@ -168,6 +200,10 @@ void RunDexCapExample(int seconds=30)
 
 int main(int argc, const char ** argv)
 {
+#ifdef WIN32
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
+#endif
     printf("退出请输入quit\n");
     do {
         printf("DexCap> ");

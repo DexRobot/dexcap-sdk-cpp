@@ -3,7 +3,7 @@ project(DexGloveDemo)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets)
+#find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets)
 
 if(UNIX)
     set(INCLUDE_DIRECTORIES /usr/lib/x86_64-linux-gnu/glib-2.0/include
@@ -29,6 +29,7 @@ else()
     set(YAML_CPP_BUILD_TESTS OFF CACHE BOOL "Disable yaml-cpp tests" FORCE)
     set(YAML_BUILD_SHARED_LIBS ON CACHE BOOL "Build yaml-cpp shared library" FORCE)
     add_subdirectory(external/yaml)
+    find_package(OpenSSL REQUIRED)
 endif()
 
 if(UNIX)
@@ -74,11 +75,22 @@ ADD_LIBRARY(DexCap SHARED ${SRC_FILES}
         src/PyDexCap.cpp
         include/DexIMUnit.h
         src/DexIMUnit.cpp
+        include/ImuOdometry.h
+        src/ImuOdometry.cpp
         interfaces/cpp/Utils.hpp
-        src/utils/SIMDFuncs.cpp)
+        src/utils/SIMDFuncs.cpp
+        src/utils/ForwardKinematics.cpp
+        include/utils/logger.h
+        src/utils/logger.cpp
+        include/utils/Matrix.h
+        src/utils/Matrix.cpp
+        include/utils/encryption.h
+        include/DexCapImpl.h)
 ADD_EXECUTABLE(DexCapDemo examples/example.cpp
-        examples/c_example.c
         examples/example_defs.h)
+ADD_EXECUTABLE(DexCapDemo_C examples/c_example.c
+        examples/example_defs.h)
+ADD_EXECUTABLE(example_imu examples/example_imu.cpp)
 
 ADD_EXECUTABLE(UnitTests
         src/common.cpp
@@ -88,24 +100,34 @@ ADD_EXECUTABLE(UnitTests
         tests/DexCapTests.h
         tests/DexCapTests.cpp
         tests/DexCap_CInterfaces_Tests.h
-        tests/DexCap_CInterfaces_Tests.cpp)
+        tests/DexCap_CInterfaces_Tests.cpp
+        tests/TestCommon.h
+        tests/TestCommon.cpp
+        tests/encryption_tests.cpp
+        tests/encryption_tests.h)
 
 add_dependencies(DexCapDemo DexCap)
+add_dependencies(DexCapDemo_C DexCap)
+add_dependencies(example_imu DexCap)
 add_dependencies(UnitTests DexCap)
 
 if(UNIX)
     target_include_directories(DexCap PUBLIC ${INCLUDE_DIRECTORIES})
     target_include_directories(UnitTests PUBLIC ${INCLUDE_DIRECTORIES})
     target_include_directories(DexCapDemo PUBLIC ${INCLUDE_DIRECTORIES})
+    target_include_directories(DexCapDemo_C PUBLIC ${INCLUDE_DIRECTORIES})
+    target_include_directories(example_imu PUBLIC ${INCLUDE_DIRECTORIES})
     set(CMAKE_CXX_FLAGS "$ENV{CXXFLAGS} -g -mavx2 -mfma -O2 -Wno-narrowing -Wno-deprecated-enum-enum-conversion")
     set(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -g -mavx2 -mfma -O0 -Wno-narrowing -Wno-deprecated-enum-enum-conversion")
     set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -g -mavx2 -mfma -O2 -Wno-narrowing -Wno-deprecated-enum-enum-conversion")
     add_compile_options(-m64 -shared -fPIC -fno-strict-aliasing -Wstringop-overflow=0 -Wpessimizing-move)
 
     set_property(TARGET DexCap PROPERTY INTERFACE_LINK_LIBRARIES -Wl,--whole-archive,$<TARGET_FILE:mpfr gmp>, --no-whole-archive)
-    target_link_libraries(DexCap PUBLIC gio-2.0 glib-2.0 gobject-2.0 bluetooth ${DEP_LIB_DIR}/libudev.so ${DEP_LIB_DIR}/libserial.so ${DEP_LIB_DIR}/libyaml-cpp.so ${DEP_LIB_DIR}/libusb-1.0.so)
+    target_link_libraries(DexCap PUBLIC ssl crypto gio-2.0 glib-2.0 gobject-2.0 bluetooth ${DEP_LIB_DIR}/libudev.so ${DEP_LIB_DIR}/libserial.so ${DEP_LIB_DIR}/libyaml-cpp.so ${DEP_LIB_DIR}/libusb-1.0.so)
     target_link_libraries(UnitTests PUBLIC gio-2.0 glib-2.0 gobject-2.0 bluetooth ${DEP_LIB_DIR}/libserial.so ${DEP_LIB_DIR}/libyaml-cpp.so ${DEP_LIB_DIR}/libusb-1.0.so ${TARGET_DIR}/libDexCap.so)
     target_link_libraries(DexCapDemo PUBLIC ${DEP_LIB_DIR}/libserial.so ${DEP_LIB_DIR}/libyaml-cpp.so ${DEP_LIB_DIR}/libusb-1.0.so ${TARGET_DIR}/libDexCap.so)
+    target_link_libraries(DexCapDemo_C PUBLIC ${DEP_LIB_DIR}/libserial.so ${DEP_LIB_DIR}/libyaml-cpp.so ${DEP_LIB_DIR}/libusb-1.0.so ${TARGET_DIR}/libDexCap.so)
+    target_link_libraries(example_imu PUBLIC ${DEP_LIB_DIR}/libserial.so ${DEP_LIB_DIR}/libyaml-cpp.so ${DEP_LIB_DIR}/libusb-1.0.so ${TARGET_DIR}/libDexCap.so)
 
     set_target_properties(DexCap PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${TARGET_DIR}")
     set_target_properties(UnitTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${TARGET_DIR}")
@@ -113,7 +135,9 @@ else()
     target_include_directories(DexCap PUBLIC ${INCLUDE_DIRECTORIES} ${PROJECT_SOURCE_DIR}/external/yaml/include/)
     target_compile_definitions(DexCap PRIVATE BUILD_DLL _AMD64_)
     target_compile_definitions(DexCapDemo PRIVATE DexCap _AMD64_)
+    target_compile_definitions(example_imu PRIVATE DexCap _AMD64_)
     target_include_directories(DexCapDemo PUBLIC ${INCLUDE_DIRECTORIES} ${PROJECT_SOURCE_DIR}/external/yaml/include/)
+    target_include_directories(example_imu PUBLIC ${INCLUDE_DIRECTORIES} ${PROJECT_SOURCE_DIR}/external/yaml/include/)
     target_include_directories(UnitTests PUBLIC ${INCLUDE_DIRECTORIES} ${PROJECT_SOURCE_DIR}/external/yaml/include/)
     target_compile_definitions(UnitTests PRIVATE _AMD64_)
 
@@ -127,11 +151,13 @@ else()
     add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
     add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
     set(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -Od -D_DEBUG /MDd")
-    set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O2 /MT")
+    set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O2 /MD")
     link_libraries(ws2_32)
     
-    target_link_libraries(DexCap PUBLIC yaml-cpp)
+    target_link_libraries(DexCap PUBLIC yaml-cpp OpenSSL::SSL OpenSSL::Crypto)
     target_link_libraries(DexCapDemo PUBLIC DexCap)
+    target_link_libraries(DexCapDemo_C PUBLIC DexCap)
+    target_link_libraries(example_imu PUBLIC DexCap)
     target_link_libraries(UnitTests PUBLIC DexCap)
     target_link_libraries(DexCap PUBLIC windowsapp RuntimeObject setupapi)
 
@@ -148,15 +174,29 @@ else()
             $<TARGET_FILE:yaml-cpp>
             "${TARGET_DIR}/$<TARGET_FILE_NAME:yaml-cpp>")
     endif()
+
+    set(OPENSSL_RUNTIME_DLLS
+      "${PROJECT_SOURCE_DIR}/external/openssl/libssl-3-x64.dll"
+      "${PROJECT_SOURCE_DIR}/external/openssl/libcrypto-3-x64.dll"
+  )
+
+    add_custom_command(TARGET DexCap POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+          ${OPENSSL_RUNTIME_DLLS}
+          "$<TARGET_FILE_DIR:DexCap>"
+  )
 endif()
 
 set_target_properties(DexCapDemo PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${TARGET_DIR}")
+set_target_properties(DexCapDemo_C PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${TARGET_DIR}")
+set_target_properties(example_imu PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${TARGET_DIR}")
 
 if(UNIX)
     add_custom_target(COPY_CONF_FILE ALL
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/examples/config.yaml ${TARGET_DIR}/config.yaml
-        COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/env_setup.sh ${TARGET_DIR}/env_setup.sh
+        #COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/env_setup.sh ${TARGET_DIR}/env_setup.sh
+        COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/98-dexcap-libusb.rules ${TARGET_DIR}/98-dexcap-libusb.rules
     )
 else()
     add_custom_target(COPY_TARGET_FILES_WIN ALL

@@ -16,6 +16,31 @@ extern "C"
 {
 #endif
 
+#ifndef _WIN32
+#ifndef BOOL
+#define BOOL int
+#else
+#undef BOOL
+#define BOOL int
+#endif
+#else
+typedef int BOOL;
+#endif
+
+#ifndef TRUE
+#define TRUE 1
+#else
+#undef TRUE
+#define TRUE 1
+#endif
+
+#ifndef FALSE
+#define FALSE 0
+#else
+#undef FALSE
+#define FALSE 0
+#endif
+
 #define DEXCAP_SUIT_HANDLE void *
 
 typedef enum
@@ -29,6 +54,7 @@ typedef enum
     ///
     DEX_SUCCESS = 0,
     DEX_SUCCESS_WITH_INFO = 1,
+    DEX_REQUEST_TIMEOUT = 2,
     DEX_NO_DATA = 100,
 } DEX_RETURN;
 
@@ -65,6 +91,9 @@ typedef enum
     ERROR_NVS_R_FAILED = 0x22,
     ERROR_BTSAVE_FAILED = 0xFB,
     PARAM_SAVE_FAILURE = 0xFE,
+
+    ///
+    ERROR_IO_FAILURE = 0x0100,
 } ErrorCode;
 
 typedef enum
@@ -74,7 +103,7 @@ typedef enum
     WIRELESS  = 0x02,
     COMMONUSB = 0x03,     // Reserved for internal use, useless for common user
     BLUETOOTH = 0x04,
-    MODBUSUSB = 0x05,     //sxl add.(Currently only for imu)
+    MODBUSUSB = 0x06,     //Currently only for imu
 } ADAPTER_TYPE;
 
 typedef enum
@@ -86,6 +115,52 @@ typedef enum
     IMUnit = 0x08,
     WRecvr = 0x20,
 } DEXCAP_DEVICE_TYPE;
+
+typedef enum
+{
+    WAIST,
+    L_ARM,
+    R_ARM,
+    L_THUMB,
+    L_INDEX,
+    L_MIDDLE,
+    L_RING,
+    L_LITTLE,
+    R_THUMB,
+    R_INDEX,
+    R_MIDDLE,
+    R_RING,
+    R_LITTLE,
+} BodyPart;
+
+typedef enum
+{
+    W_JOINT_B,    // DOF of IMU, End point of waist
+    W_JOINT_1,
+    W_JOINT_2,
+    W_JOINT_3,
+    W_JOINT_4,
+    W_JOINT_5,
+    W_JOINT_U,    // A dummy DOF of center of shoulder
+    L_JOINT_1,
+    L_JOINT_2,
+    L_JOINT_3,
+    L_JOINT_4,
+    L_JOINT_5,
+    L_JOINT_6,
+    L_JOINT_7,
+    L_JOINT_8,
+    L_JOINT_9,
+    R_JOINT_1,
+    R_JOINT_2,
+    R_JOINT_3,
+    R_JOINT_4,
+    R_JOINT_5,
+    R_JOINT_6,
+    R_JOINT_7,
+    R_JOINT_8,
+    R_JOINT_9,
+} ExoSkeletonJointID;
 
 typedef enum ProductVersion_t
 {
@@ -156,22 +231,39 @@ PACK(typedef struct MainBatteryState_t
     uint16_t RemainPower;  // Percentage of remaining power
     uint16_t Temperature;  // As in centigrade value divided by 10
     uint16_t StatusBitmap;
+    uint16_t Reserved;
 } MainBatteryState);
+
+PACK(typedef struct BodyBoardState_t
+{
+    BOOL Enabled;  // Whether sensors are enabled
+    BOOL CharingL;
+    BOOL CharingR;
+    BOOL BLEConnected;
+    BOOL NeedCharge;
+} BodyBoardState);
 
 PACK(typedef struct InertialUnitData_t
 {
-    double roll;
-    double pitch;
-    double yaw;
-    double quat[4];     // quaternion
-    double accel[3];    // accelerometer (x, y, z)
-    double gyscp[3];    // gyroscope (x, y, z)
-    double magnt[3];    // magnetometer (x, y, z)
-    double air_pressure; // air pressure
-    double temp;         // Temperature
+    float roll;
+    float pitch;
+    float yaw;
+    float quat[4];     // quaternion
+    float accel[3];    // accelerometer (x, y, z)
+    float gyscp[3];    // gyroscope (x, y, z)
+    float magnt[3];    // magnetometer (x, y, z)
+    float air_pressure; // air pressure
+    int8_t temp;         // Temperature
     uint32_t system_time;//system time
     uint64_t timestamp;
 } InertialUnitData);
+
+PACK(typedef struct InetMUData_t
+{
+    uint32_t sys_time;//system time of imu,for debug
+    float poseData[17];
+    int8_t temp;         // Temperature
+}InetMUData);
 
 PACK(typedef struct DexCapJointData_t
 {
@@ -179,9 +271,16 @@ PACK(typedef struct DexCapJointData_t
     uint16_t LGlove[24];
     uint16_t ExBody[24];
     uint16_t RGlove[24];
-    double   InetMU[19];
+    InetMUData InetMU;
     uint64_t timestamp;
 } DexCapJointData);
+
+PACK(typedef struct DexCapEndPoses_t
+{
+    double LArm[4][4];
+    double RArm[4][4];
+    uint64_t timestamp;
+} DexCapEndPoses);
 
 typedef void (* DexCapJointDataProc)(const DexCapJointData *);
 

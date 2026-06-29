@@ -1,4 +1,4 @@
-# DexCap SDK V2.0（DexCap Devices V4）C++ API Reference
+# DexCap SDK V2.1（对应DexCap设备版本V4）C++ API Reference
 
 ## 1 常用数据类型
 

@@ -216,6 +216,59 @@ void RunDexCapExample(int seconds=30 /* Run for secdons */)
     logFile.close();
 }
 
+bool BluetoothEncryptionTest(const std::string & bleDevName, uint64_t timespan)
+{
+    DexCapSuit dexCapSuit(ProductVersion::V4);
+    dexCapSuit.registerStatusDataProc(SensorDataCallback);
+
+    printf("Connecting......\n  Device Name: %s\n\n", bleDevName.c_str());
+    const auto deviceType = dexCapSuit.ConnectDevice(bleDevName, BLUETOOTH);
+
+    if (deviceType == ExoApparatus::UnDefn)
+    {
+        std::cout << "Device connection failed: " << bleDevName << std::endl;
+        return false;
+    }
+
+    const auto it = DEVICE_NAMES.find(deviceType);
+    if (it == DEVICE_NAMES.end())
+    {
+        std::cout << "Unrecognized device name: " << bleDevName << std::endl;
+        return false;
+    }
+
+    const auto deviceId = dexCapSuit.GetDeviceID(deviceType);
+    std::cout << "Device device ID: " << static_cast<int>(deviceId)
+        << ". Device Name: " << it->second << std::endl;
+
+    auto connState = dexCapSuit.IsConnected(deviceType);
+    std::cout << "Device connection status: " << (connState ? "Connected" : "Disconnected")
+        << " on " << bleDevName << std::endl;
+
+    const auto startTs = current_timestamp();
+    const std::string logFileName = "./sensor_data_stream-" + timestamp_to_datetime_string(startTs) + ".log";
+    logFile.open(logFileName, std::ios_base::out | std::ios_base::app);
+    std::cout << "Output log file: " << logFileName << std::endl;
+
+    dexCapSuit.Start();
+
+    bool timeout = false;
+    do {
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+        const auto currentTs = current_timestamp();
+        const auto duration = currentTs - startTs;
+        timeout = duration >= timespan * 1000;
+
+        const auto & dateStr = timestamp_to_datetime_string(currentTs);
+        std::cout << dateStr << std::endl;
+    } while (!timeout);
+
+    dexCapSuit.Close();
+    logFile.close();
+
+    return true;
+}
+
 int main(int argc, const char ** argv)
 {
     printf("退出请输入quit\n");
@@ -238,12 +291,17 @@ int main(int argc, const char ** argv)
         if (strCmd.starts_with("run"))
         {
             int seconds = 30;
+            std::string bleDevName;
             std::vector<std::string> args;
             split(args, strCmd, " ");
-            if (args.size() >= 2)
-                seconds = std::stoi(args[1]);
+            if (args.size() == 2)
+                bleDevName = std::string(args[1]);
 
-            RunDexCapExample(seconds);
+            if (args.size() == 3)
+                seconds = std::stoi(args[2]);
+
+            //RunDexCapExample(seconds);
+            BluetoothEncryptionTest(bleDevName, 60);
         }
         else
         {

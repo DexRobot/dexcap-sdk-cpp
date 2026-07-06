@@ -300,8 +300,8 @@ int main(int argc, const char ** argv)
             if (args.size() == 3)
                 seconds = std::stoi(args[2]);
 
-            //RunDexCapExample(seconds);
-            BluetoothEncryptionTest(bleDevName, 60);
+            RunDexCapExample(seconds);
+            //BluetoothEncryptionTest(bleDevName, 60);
         }
         else
         {

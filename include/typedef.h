@@ -57,6 +57,7 @@ typedef enum
     DEX_REQUEST_TIMEOUT    = 2,
     DEX_SEC_ON_WITHOUT_KEY = 3,
     DEX_BLE_CONN_UNSECURED = 4,
+    DEX_STRING_TRUNCATED   = 6,
     DEX_NO_DATA            = 100,
 } DEX_RETURN;
 

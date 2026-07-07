@@ -68,20 +68,6 @@ void JointDataCallback(const DexCapJointData * data)
         }
         printf("\n");
     }
-
-    if (data->mask & 0x1000)
-    {
-        /// TODO: Not implemented yet
-        printf("[IMU]:");
-        printf("Euler Angles:[%.3f,%.3f,%.3f],Quaternion[%.3f,%.3f,%.3f,%.3f],Accel:[%.3f,%.3f,%.3f],Gyroscope:[%.3f, %.3f, %.3f],Magnet:[%.3f,%.3f,%.3f],air_pressure:%.3f,Temperature:%.2f\n",
-            data->InetMU[0], data->InetMU[1], data->InetMU[2],
-            data->InetMU[3], data->InetMU[4], data->InetMU[5], data->InetMU[6],
-            data->InetMU[7], data->InetMU[8], data->InetMU[9],
-            data->InetMU[10], data->InetMU[11], data->InetMU[12],
-            data->InetMU[13], data->InetMU[14], data->InetMU[15],
-            data->InetMU[16], data->InetMU[17]);
-        printf("\n");
-    }
 }
 
 BOOL CInterfaceTest()

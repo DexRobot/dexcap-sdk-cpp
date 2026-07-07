@@ -57,6 +57,7 @@ typedef enum
     DEX_REQUEST_TIMEOUT    = 2,
     DEX_SEC_ON_WITHOUT_KEY = 3,
     DEX_BLE_CONN_UNSECURED = 4,
+    DEX_STRING_TRUNCATED   = 6,
     DEX_NO_DATA            = 100,
 } DEX_RETURN;
 
@@ -108,7 +109,7 @@ typedef enum
     WIRELESS  = 0x02,
     COMMONUSB = 0x03,     // Reserved for internal use, useless for common user
     BLUETOOTH = 0x04,
-    MODBUSUSB = 0x06,     //sxl add.(Currently only for imu)
+    MODBUSUSB = 0x06,     //Currently only for imu
 } ADAPTER_TYPE;
 
 typedef enum
@@ -250,18 +251,25 @@ PACK(typedef struct BodyBoardState_t
 
 PACK(typedef struct InertialUnitData_t
 {
-    double roll;
-    double pitch;
-    double yaw;
-    double quat[4];       // quaternion
-    double accel[3];      // accelerometer (x, y, z)
-    double gyscp[3];      // gyroscope (x, y, z)
-    double magnt[3];      // magnetometer (x, y, z)
-    double air_pressure;  // air pressure
-    double temp;          // Temperature
-    uint32_t system_time; //system time
+    float roll;
+    float pitch;
+    float yaw;
+    float quat[4];     // quaternion
+    float accel[3];    // accelerometer (x, y, z)
+    float gyscp[3];    // gyroscope (x, y, z)
+    float magnt[3];    // magnetometer (x, y, z)
+    float air_pressure; // air pressure
+    int8_t temp;         // Temperature
+    uint32_t system_time;//system time
     uint64_t timestamp;
 } InertialUnitData);
+
+PACK(typedef struct InetMUData_t
+{
+    uint32_t sys_time;   //system time of imu,for debug
+    float poseData[17];  //The data order is from InertialUnitData's roll to air_pressure
+    int8_t temp;         // Temperature
+}InetMUData);
 
 PACK(typedef struct DexCapJointData_t
 {
@@ -269,7 +277,7 @@ PACK(typedef struct DexCapJointData_t
     uint16_t LGlove[24];
     uint16_t ExBody[24];
     uint16_t RGlove[24];
-    double   InetMU[19];
+    InetMUData InetMU;
     uint64_t timestamp;
 } DexCapJointData);
 

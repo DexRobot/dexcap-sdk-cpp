@@ -1,6 +1,3 @@
-//
-// Created by ryzuo on 25-8-20.
-//
 #pragma once
 
 #include <map>
@@ -25,6 +22,7 @@ class DexCapDevice;
 class DexGlove;
 class DexoBody;
 class DexIMUnit;
+class DeviceStatuData;
 class BluetoothDriver;
 class DexCapDataHandler;
 class ForwardKinematics;
@@ -64,6 +62,7 @@ public:
     [[nodiscard]] std::string GetAdapterName(ExoApparatus device) const;
 
     bool InitNetwork(const std::string & serverAddr, int serverPort, NetProtocolType netType);
+    bool CloseNetwork();
 
     ProductVersion & productVersion();
     [[nodiscard]] const ProductVersion & productVersion() const;
@@ -99,7 +98,7 @@ public:
     [[nodiscard]] const SkeletonJointAngles & GetBodyJointState() const;
     [[nodiscard]] const GloveJointAngles & GetLeftGloveJointState() const;
     [[nodiscard]] const GloveJointAngles & GetRightGloveJointState() const;
-    [[nodiscard]] const InertialUnitData & GetInertialMUJointState() const;//sxl add.
+    [[nodiscard]] const InertialUnitData & GetIMUSensorData() const;
 
     [[nodiscard]] const DexCapEndPoses & GetEndPose() const;
 
@@ -113,42 +112,16 @@ public:
     [[nodiscard]] ErrorCode getErrorCode(ExoApparatus device) const;
     [[nodiscard]] std::string getErrorMessage(ExoApparatus device) const;
 
-    [[nodiscard]] ErrorCode getErrorCode() const { return this->errCode; }
+    [[nodiscard]] ErrorCode getErrorCode() const;
     const std::string & getErrorMessage();
 
     void registerStatusDataProc(const DexCapStatusDataProc & callback);
 
-private:
-    [[nodiscard]] std::pair<bool, const std::string> IsDeviceExists(ExoApparatus device) const;
-    [[nodiscard]] bool IsDeviceExists(const std::string & adapterName) const;
-
-    void RemoveDevice(ExoApparatus device);
-    void RemoveDevice(const std::string & adapterName);
-
-protected:
-    ProductVersion prodVersion;
-    BluetoothDriver * bluetoothDriver;
-    ErrorCode errCode;
-    std::string errMsg;
-    std::string homeDir;
-    std::string configureFile;
-    std::map<std::string, std::shared_ptr<DexCapDevice>> adapterDeviceMap;
+    [[nodiscard]] size_t RegisterImuDataCallback(const std::function<void(uint8_t, const std::shared_ptr<DeviceStatuData>&)>& callback) const;
+    void UnregisterImuDataCallback(size_t handle) const;
 
 private:
-    std::shared_ptr<DexGlove> lHand;
-    std::shared_ptr<DexGlove> rHand;
-    std::shared_ptr<DexoBody> xBody;
-    std::shared_ptr<DexIMUnit> imUnit;
-    std::unique_ptr<Socket> network;
-
-    std::map<ExoApparatus, ErrorCode> lastError;
-
-    DexCapStatusDataProc statusDataProc;
-    DexCapDataHandler * dataHandler;
-
-    friend class DexCapSuitAdmin;
-    friend class DexCapDataHandler;
-    friend class ForwardKinematics;
+    class DexCapSuitImpl *impl;
 };
 
 }

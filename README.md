@@ -60,5 +60,6 @@ dexcap-sdk-cpp/
 
 ## **2. API Reference**
 
-### [2.1. CPP API Reference](./docs/CPP-API-Reference.md)
+### [2.1. CPP API Reference(中文)](./docs/CPP-API-Reference-CHS.md)
+### [2.1. CPP API Reference(English)](./docs/CPP-API-Reference-EN.md)
 

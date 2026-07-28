@@ -55,7 +55,7 @@ public:
     explicit DexCapSuit(ProductVersion version, const std::string & configFile = "./config.yaml");
     virtual ~DexCapSuit();
 
-    virtual ExoApparatus ConnectDevice(const std::string & adapterName, AdapterType adapterType);
+    virtual ExoApparatus ConnectDevice(const std::string & adapterName, AdapterType adapterType, bool forceCharge=false);
     virtual bool DisconnectDevice(const std::string & adapterName);
     virtual bool DisconnectDevice(ExoApparatus device);
 
@@ -107,6 +107,8 @@ public:
 
     void VibeMotors(ExoApparatus hand, const std::vector<uint8_t> &) const;
     [[nodiscard]] std::string GetFirmwareVersion(ExoApparatus device) const;
+
+    [[nodiscard]] bool ChargeGlove(uint8_t gloveType, bool chargeOn=true) const;
 
     [[nodiscard]] bool anyError(ExoApparatus device) const;
     [[nodiscard]] ErrorCode getErrorCode(ExoApparatus device) const;

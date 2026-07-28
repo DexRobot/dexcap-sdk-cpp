@@ -55,6 +55,8 @@ DEX_RETURN dexcap_get_arm_end_poses(DEXCAP_SUIT_HANDLE hSuit, DexCapEndPoses *en
 DEX_RETURN dexcap_get_l_battery_state(DEXCAP_SUIT_HANDLE hSuit, uint16_t * voltage);
 DEX_RETURN dexcap_get_r_battery_state(DEXCAP_SUIT_HANDLE hSuit, uint16_t * voltage);
 DEX_RETURN dexcap_get_main_battery_state(DEXCAP_SUIT_HANDLE hSuit, MainBatteryState *batteryState);
+DEX_RETURN dexcap_charge_l_glove(DEXCAP_SUIT_HANDLE hSuit, BOOL chargeOn);
+DEX_RETURN dexcap_charge_r_glove(DEXCAP_SUIT_HANDLE hSuit, BOOL chargeOn);
 
 DEX_RETURN register_joint_data_callback(DEXCAP_SUIT_HANDLE hSuit, DexCapJointDataProc callback);
 

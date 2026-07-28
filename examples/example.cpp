@@ -271,6 +271,11 @@ bool BluetoothEncryptionTest(const std::string & bleDevName, uint64_t timespan)
 
 int main(int argc, const char ** argv)
 {
+#ifdef WIN32
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
+#endif
+
     printf("退出请输入quit\n");
     do {
         printf("DexCap> ");

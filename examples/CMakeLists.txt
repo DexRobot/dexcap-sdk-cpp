@@ -3,7 +3,6 @@ project(DexGloveDemo)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets)
 
 set(INCLUDE_DIRECTORIES
     ${PROJECT_SOURCE_DIR}/../include
@@ -12,9 +11,7 @@ set(INCLUDE_DIRECTORIES
 if(UNIX)
     set(DEP_LIB_DIR ${PROJECT_SOURCE_DIR}/../libs/linux)
 else()
-    set(YAML_CPP_BUILD_TESTS OFF CACHE BOOL "Disable yaml-cpp tests" FORCE)
-    set(YAML_BUILD_SHARED_LIBS ON CACHE BOOL "Build yaml-cpp shared library" FORCE)
-    add_subdirectory(external/yaml)
+    set(DEP_LIB_DIR ${PROJECT_SOURCE_DIR}/../libs/windows)
 endif()
 
 if(UNIX)
@@ -39,7 +36,9 @@ if(UNIX)
     target_link_libraries(DexCapDemo_C PUBLIC ${DEP_LIB_DIR}/libserial.so ${DEP_LIB_DIR}/libyaml-cpp.so ${DEP_LIB_DIR}/libusb-1.0.so ${DEP_LIB_DIR}/libDexCap.so)
 else()
     target_compile_definitions(DexCapDemo PRIVATE DexCap _AMD64_)
-    target_include_directories(DexCapDemo PUBLIC ${INCLUDE_DIRECTORIES} ${PROJECT_SOURCE_DIR}/external/yaml/include/)
+    target_compile_definitions(DexCapDemo_C PRIVATE DexCap _AMD64_)
+    target_include_directories(DexCapDemo PUBLIC ${INCLUDE_DIRECTORIES})
+    target_include_directories(DexCapDemo_C PUBLIC ${INCLUDE_DIRECTORIES})
 
     add_definitions(
             /GS /W3 /Gy /Ob2 /Zc:wchar_t /Zi /Gm- /Zc:inline /Zc:__cplusplus /fp:precise /D "WIN32"
@@ -53,9 +52,10 @@ else()
     set(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -Od -D_DEBUG /MDd")
     set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O2 /MT")
     link_libraries(ws2_32)
-    
-    target_link_libraries(DexCapDemo PUBLIC DexCap)
-    get_target_property(YAMLCPP_TYPE yaml-cpp TYPE)
+
+    link_directories(${DEP_LIB_DIR})
+    target_link_libraries(DexCapDemo PUBLIC ${DEP_LIB_DIR}/DexCap.lib)
+    target_link_libraries(DexCapDemo_C PUBLIC ${DEP_LIB_DIR}/DexCap.lib)
 endif()
 
 set_target_properties(DexCapDemo PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${TARGET_DIR}")

@@ -164,5 +164,9 @@ BOOL CInterfaceTest()
 
 int main(int argc, const char **argv)
 {
+#ifdef WIN32
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
+#endif
     CInterfaceTest();
 }

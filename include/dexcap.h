@@ -56,6 +56,12 @@ DEX_RETURN dexcap_get_l_battery_state(DEXCAP_SUIT_HANDLE hSuit, uint16_t * volta
 DEX_RETURN dexcap_get_r_battery_state(DEXCAP_SUIT_HANDLE hSuit, uint16_t * voltage);
 DEX_RETURN dexcap_get_main_battery_state(DEXCAP_SUIT_HANDLE hSuit, MainBatteryState *batteryState);
 
+DEX_RETURN dexcap_charge_l_glove(DEXCAP_SUIT_HANDLE hSuit, BOOL chargeOn);
+DEX_RETURN dexcap_charge_r_glove(DEXCAP_SUIT_HANDLE hSuit, BOOL chargeOn);
+
+DEX_RETURN dexcap_vibrate_l_motors(DEXCAP_SUIT_HANDLE hSuit, uint8_t vibValues[5]);
+DEX_RETURN dexcap_vibrate_r_motors(DEXCAP_SUIT_HANDLE hSuit, uint8_t vibValues[5]);
+
 DEX_RETURN register_joint_data_callback(DEXCAP_SUIT_HANDLE hSuit, DexCapJointDataProc callback);
 
 DEX_RETURN dexcap_get_diagnostics(DEXCAP_SUIT_HANDLE hSuit, ErrorCode *errCode, char *errMsg, size_t errMsgLen, size_t *actualErrMsgLen);

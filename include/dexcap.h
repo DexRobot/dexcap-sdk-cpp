@@ -56,6 +56,7 @@ DEX_RETURN dexcap_get_l_battery_state(DEXCAP_SUIT_HANDLE hSuit, uint16_t * volta
 DEX_RETURN dexcap_get_r_battery_state(DEXCAP_SUIT_HANDLE hSuit, uint16_t * voltage);
 DEX_RETURN dexcap_get_main_battery_state(DEXCAP_SUIT_HANDLE hSuit, MainBatteryState *batteryState);
 
+BOOL dexcap_is_device_need_charge(DEXCAP_SUIT_HANDLE hSuit, DEXCAP_DEVICE_TYPE deviceType);
 DEX_RETURN dexcap_charge_l_glove(DEXCAP_SUIT_HANDLE hSuit, BOOL chargeOn);
 DEX_RETURN dexcap_charge_r_glove(DEXCAP_SUIT_HANDLE hSuit, BOOL chargeOn);
 

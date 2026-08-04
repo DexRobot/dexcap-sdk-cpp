@@ -1,0 +1,4 @@
+# For a specific device (replace with your VID:PID)
+KERNEL=="ttyUSB[0-9]*", MODE="0777"
+KERNEL=="ttyCH34[0-9]USB[0-9]*", MODE="0777"
+KERNEL=="ttyACM[0-9]*", MODE="0777"

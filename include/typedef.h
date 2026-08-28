@@ -18,7 +18,7 @@ extern "C"
 
 #ifndef _WIN32
 #ifndef BOOL
-#define BOOL int
+#define BOOL unsigned char
 #else
 #undef BOOL
 #define BOOL int

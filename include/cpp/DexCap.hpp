@@ -102,7 +102,7 @@ public:
 
     [[nodiscard]] const DexCapEndPoses & GetEndPose() const;
 
-    [[nodiscard]] uint16_t GetBatteryLevel(ExoApparatus device) const;
+    [[nodiscard]] uint16_t GetBatteryLevel(ExoApparatus device);
     [[nodiscard]] const MainBatteryState *GetMainBatteryState() const;
 
     void VibeMotors(ExoApparatus hand, const std::vector<uint8_t> &) const;

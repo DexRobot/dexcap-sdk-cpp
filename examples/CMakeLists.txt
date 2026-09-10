@@ -9,9 +9,20 @@ set(INCLUDE_DIRECTORIES
     ${PROJECT_SOURCE_DIR}/../include/cpp)
 
 if(UNIX)
-    set(DEP_LIB_DIR ${PROJECT_SOURCE_DIR}/../libs/linux)
+    string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" DEXCAP_ARCH)
+    if(DEXCAP_ARCH MATCHES "^(x86_64|amd64)$")
+        set(DEP_LIB_DIR "${PROJECT_SOURCE_DIR}/../libs/linux/x86_64")
+    elseif(DEXCAP_ARCH MATCHES "^(aarch64|arm64)$")
+        set(DEP_LIB_DIR "${PROJECT_SOURCE_DIR}/../libs/linux/aarch64")
+    else()
+        message(FATAL_ERROR
+            "Unsupported Linux architecture: ${CMAKE_SYSTEM_PROCESSOR}. "
+            "Supported: x86_64, aarch64.")
+    endif()
+elseif(WIN32)
+    set(DEP_LIB_DIR "${PROJECT_SOURCE_DIR}/../libs/windows")
 else()
-    set(DEP_LIB_DIR ${PROJECT_SOURCE_DIR}/../libs/windows)
+    message(FATAL_ERROR "Unsupported platform.")
 endif()
 
 if(UNIX)

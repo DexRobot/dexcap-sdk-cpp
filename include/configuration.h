@@ -11,7 +11,6 @@
 #include<Windows.h>
 #endif
 
-#include <yaml-cpp/yaml.h>
 #include "cpp/TypeDef.hpp"
 
 #ifdef __cplusplus
@@ -114,7 +113,6 @@ private:
 
 private:
 
-    YAML::Node configuration;
   
 };
 

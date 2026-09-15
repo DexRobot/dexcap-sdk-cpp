@@ -79,10 +79,16 @@ if(UNIX)
         COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/../conf/env_setup.sh ${TARGET_DIR}/env_setup.sh
     )
 else()
-    add_custom_target(COPY_TARGET_FILES_WIN ALL
-        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy
-            ${PROJECT_SOURCE_DIR}/../conf/config.yaml
-            ${TARGET_DIR}/config.yaml
+    if(EXISTS ${PROJECT_SOURCE_DIR}/../conf/config.yaml)
+        add_custom_target(COPY_TARGET_FILES_WIN ALL
+            WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${TARGET_DIR}
+            COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/../conf/config.yaml ${TARGET_DIR}/config.yaml
         )
+    else()
+        message(WARNING "config.yaml not found at ${PROJECT_SOURCE_DIR}/../conf/config.yaml — skipping copy; build will continue.")
+        add_custom_target(COPY_TARGET_FILES_WIN ALL
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${TARGET_DIR}
+        )
+    endif()
 endif()

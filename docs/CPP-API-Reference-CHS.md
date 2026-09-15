@@ -36,8 +36,8 @@ __声明：__`typedef enum { ... } ADAPTER_TYPE;`
 
 __文件：__`typedef.h`
 
-C/C++接口通用，枚举类型，表示DexCap设备所支持的所有连接适配器的类型，如WIREDUSB，BLUETOOTH，分别代表USB和蓝牙连接。在创建DexCap实例句柄或对象时使用。
-<br><br>
+C/C++接口通用，枚举类型，表示DexCap设备所支持的所有连接适配器的类型，如WIREDUSB，WLAN_TCP，分别代表USB和WLAN连接。在创建DexCap实例句柄或对象时使用。
+<br><br>WLABN
 
 
 ###  __1.15 `DEXCAP_DEVICE_TYPE`__
@@ -45,20 +45,11 @@ __声明：__`typedef enum { ... } DEXCAP_DEVICE_TYPE;`
 
 __文件：__`typedef.h`
 
-C/C++接口通用，枚举类型，表示DexCap设备的类型，如UpBody代表上肢外骨骼，LGlove和RGlove分别代表左右手手套，以及IMUnit代表腰部IMU。对于V4设备，SDK与设备成功连接后，会自动识别设备的真实类型，并将设备的类型参数进行赋值。
+C/C++接口通用，枚举类型，表示DexCap设备的类型，如UpBody/JSBody(包含左右手手柄)代表上肢外骨骼，LGlove和RGlove分别代表左右手手套，以及IMUnit代表腰部IMU。对于V4设备，SDK与设备成功连接后，会自动识别设备的真实类型，并将设备的类型参数进行赋值。
 <br><br>
 
 
-###  __1.16 `DEXCAP_DEVICE_TYPE`__
-__声明：__`typedef enum { ... } DEXCAP_DEVICE_TYPE;`
-
-__文件：__`typedef.h`
-
-C/C++接口通用，枚举类型，表示DexCap设备的类型，如UpBody代表上肢外骨骼，LGlove和RGlove分别代表左右手手套。对于V4设备，SDK与设备成功连接后，会自动识别设备的真实类型，并且返回该值。
-<br><br>
-
-
-###  __1.17 `ExoSkeletonJointID`__
+###  __1.16 `ExoSkeletonJointID`__
 __声明：__`typedef enum { ... } ExoSkeletonJointID;`
 
 __文件：__`typedef.h`
@@ -67,58 +58,45 @@ C/C++接口通用，枚举类型，表示DexCap上肢外骨骼所有自由度的
 <br><br>
 
 
-###  __1.18 `ProductVersion`__
+###  __1.17 `ProductVersion`__
 __声明：__`typedef enum { ... } ProductVersion;`
 
 __文件：__`typedef.h`
 
-C/C++接口通用，枚举类型，表示DexCap的产品版本，目前V3代表V3.5版设备，V4即V4版设备。
+C/C++接口通用，枚举类型，表示DexCap的产品版本，目前V3代表V3.5版设备，V4即V4版设备，V4C1代表V4 CASBOT定制版1代。
 <br><br>
 
 
-###  __1.9 `GloveJointAngles`__
+###  __1.18 `Joystick`__
 __声明 ：__
 ```
-typedef struct GloveJointAngles_t
+typedef struct Joystick_t
 {
-    uint16_t ThumbDIP;
-    uint16_t ThumbPIP;
-    uint16_t ThumbMCP;
-    uint16_t ThumbSWP;
-    uint16_t ThumbROP;
-    uint16_t IndexDIP;
-    uint16_t IndexPIP;
-    uint16_t IndexMCP;
-    uint16_t IndexSWP;
-    uint16_t MiddleDIP;
-    uint16_t MiddlePIP;
-    uint16_t MiddleMCP;
-    uint16_t MiddleSWP;
-    uint16_t RingDIP;
-    uint16_t RingPIP;
-    uint16_t RingMCP;
-    uint16_t RingSWP;
-    uint16_t LittleDIP;
-    uint16_t LittlePIP;
-    uint16_t LittleMCP;
-    uint16_t LittleSWP;
-    uint16_t BatteryState;
-    uint32_t ErrorMask;
-    uint64_t timestamp;
-} GloveJointAngles;
+    int16_t  RockerX  : 16;
+    int16_t  RockerY  : 16;
+    uint16_t TgrDistA : 16;
+    uint16_t TgrDistB : 16;
+    uint8_t  ButtonA  : 1;
+    uint8_t  ButtonB  : 1;
+    uint8_t  RockerZ  : 1;
+    uint8_t  TriggerA : 1;
+    uint8_t  TriggerB : 1;
+    int16_t  Reserved : 11;
+} Joystick;
 ```
 
 __文件：__`typedef.h`
 
-C/C++接口通用，结构体。手套所有关节的原始角度数据的模型，在数采过程中可通过对应的数据访问接口获取当前时刻SDK采集到的手套设备所有关节的角度数据，电池状态，关节传感器状态位图，以及时间戳。
-其中关节角度数据均为uint16_t类型，取值为实际角度值*100。时间戳即为SDK采样获取该帧数据时刻的系统时间。
+C/C++接口通用，结构体。遥控手柄所有按键数据。在数采过程中可通过对应的数据访问接口实时获取当前时刻手柄上各个按键的状态，摇杆以及板机的行程等数据。
+摇杆的行程为有符号short整型数据，扳机行程为无符号short整型。其中摇杆X轴值为负数时，表明摇杆被拨向左侧，为正数时表明摇杆被拨向右侧。摇杆Y轴值为负时，
+表明摇杆被拨向下方，为正时则是被拨向上方。摇杆按键及其他按键均为无符号单字节数据，读数为1时，表明按键被按下，读数为0时，则按键未触发。
 <br><br>
 
 
-###  __1.10 `SkeletonJointAngles`__
+###  __1.19 `SkeletonArmsData`__
 __声明 ：__
 ```
-typedef struct SkeletonJointAngles_t
+typedef struct SkeletonArmsData_t
 {
     uint16_t LArm1;
     uint16_t LArm2;
@@ -127,8 +105,6 @@ typedef struct SkeletonJointAngles_t
     uint16_t LArm5;
     uint16_t LArm6;
     uint16_t LArm7;
-    uint16_t LArm8;
-    uint16_t LArm9;
     uint16_t RArm1;
     uint16_t RArm2;
     uint16_t RArm3;
@@ -136,26 +112,20 @@ typedef struct SkeletonJointAngles_t
     uint16_t RArm5;
     uint16_t RArm6;
     uint16_t RArm7;
-    uint16_t RArm8;
-    uint16_t RArm9;
-    uint16_t Back1;
-    uint16_t Back2;
-    uint16_t Back3;
-    uint16_t Back4;
-    uint16_t Back5;
-    uint16_t Reserved;
+    Joystick LJoyS;  // Left Joystick
+    Joystick RJoyS;  // Right Joystick
     uint64_t timestamp;
-} SkeletonJointAngles;
+} SkeletonArmsData;
 ```
 
 __文件：__`typedef.h`
 
-C/C++接口通用，结构体。手套所有关节的原始角度数据的模型，在数采过程中可通过对应的数据访问接口获取当前时刻SDK采集到的上肢外骨骼设备所有关节的角度数据，以及关节的状态位图。
-其中关节角度数据均为uint16_t类型，取值为实际角度值*100。时间戳即为SDK采样获取该帧数据时刻的系统时间。
+C/C++接口通用结构体。外骨骼及手柄所有关节的和按键的原始数据的模型，在数采过程中可通过对应的数据访问接口获取当前时刻SDK采集到的上肢外骨骼设备所有关节的角度数据。
+其中关节角度数据均为uint16_t类型，取值为实际角度值*100。LJoyS代表左手手柄，RJoyS代表右手手柄。时间戳即为SDK采样获取该帧数据时刻的系统时间。
 <br><br>
 
 
-###  __1.111 `MainBatteryState`__
+###  __1.20 `MainBatteryState`__
 __声明 ：__
 ```
 typedef struct MainBatteryState_t
@@ -171,116 +141,64 @@ typedef struct MainBatteryState_t
 <br><br>
 
 
-###  __1.112 `InertialUnitData`__
+###  __1.21 `SystemStatus`__
 __声明：__
 ```
-typedef struct InertialUnitData_t
+typedef struct SystemStatus_t
 {
-    double roll;
-    double pitch;
-    double yaw;
-    double quat[4];       // quaternion
-    double accel[3];      // accelerometer (x, y, z)
-    double gyscp[3];      // gyroscope (x, y, z)
-    double magnt[3];      // magnetometer (x, y, z)
-    double air_pressure;  // air pressure
-    double temp;          // Temperature
-    uint32_t system_time; //system time
-    uint64_t timestamp;
-} InertialUnitData
+    BOOL  Enabled    : 1;  // Whether sensors are enabled
+    UCHAR Reserved1  : 2;
+    BOOL  WifiState  : 1;
+    BOOL  BootState  : 1;
+    BOOL  NeedCharge : 1;
+    BOOL  Reserved2  : 1;
+    BOOL  LJoyConn   : 1;
+    BOOL  RJoyConn   : 1;
+    BOOL  Reserved2  : 7;
+} SystemStatus;
+```
+__文件：__`typedef.h`
+
+C/C++接口通用结构体。DexCap数采设备的主控系统状态图。其中：
+
+    - Enabled： 表示设备传感器是否全部使能。
+    - Reserved1： 系统保留字段，暂无意义。
+    - WifiState： 表示设备Wifi连接状态，1为已连接，0为空闲。
+    - BootState ： 设备固件的bootloader状态，为1时表明设备固件已进入bootloader，等待升级。
+    - NeedCharge： 该字段为1时，表明设备主控的电池电量很低，需要充电才能维持设备正常运行
+    - Reserved2 ： 系统保留字段，暂无意义。
+    - LJoyConn  ： 左手手柄是否已连接
+    - RJoyConn  ： 右手手柄是否已连接
+    - Reserved2 ： 系统保留字段，暂无意义。
+
+
+###  __1.22 `SuitStatusData`__
+__声明：__
+```
+typedef struct SuitStatusData_t
+{
+    SkeletonArmsData jointData;
+    MainBatteryStatus mainBatteryState;
+    SystemStatus systemStatus;
+} SuitStatusData
 ```
 
 __文件：__`typedef.h`
 
-C/C++接口通用，结构体。DexCap上肢外骨骼腰部的IMU模块。DexCap上肢外骨骼的IMU模块属于可选设备，且仅作为辅助功能模块。DexCap SDK及相关软件仅开放IMU模块的原始数据，不提供基于IMU的实际应用。
-有能力的用户可以自行使用原始数据，结合自身场景，来实现姿态识别，里程计算等功能的应用。
-注：灵巧智能不承诺对用户使用IMU进行操作和控制设备等行为带来的任何损失承担责任。
+C/C++接口通用结构体。DexCap套设备所有模块的关节角度数据，手柄按键状态及行程数据，主控板电池状态数据，主控板系统状态数据。
+关于各字段数据语义的详细说明，分别参考SkeletonArmsData，MainBatteryStatus，以及SystemStatus的说明。
 <br><br>
 
 
-###  __1.113 `DexCapJointData`__
-__声明：__
-```
-typedef struct DexCapJointData_t
-{
-    uint32_t mask;
-    uint16_t LGlove[24];
-    uint16_t ExBody[24];
-    uint16_t RGlove[24];
-    double   InetMU[19];
-    uint64_t timestamp;
-} DexCapJointData
-```
-
-__文件：__`typedef.h`
-
-C/C++接口通用，结构体。DexCap套设备所有模块的关节角度数据，分别以uint16_t数组的形式存放。其中mask字段为可用数据的位图，该位图指明结构体中数据有效的数组。LGlove, ExBody, RGlove分别
-代表左手手套，上肢外骨骼，右手手套的所有自由度的角度数据，每个元素取值为实际角度值*100。InetMU即IMU模块的原始数据。timestamp为SDK获取该组数据的同步时间戳。
-mask的位图说明具体如下表：
-
-| 成员数组名     | 对应mask位值 | 含义         |
-|-----------|----------|------------|
-| LGlove    | 0x8000   | 左手手套数据有效   |
-| ExBody    | 0x4000   | 上肢外骨骼数据有效  |
-| RGlove    | 0x2000   | 右手手套数据有效   |
-| InetMU    | 0x1000   | IMU模块数据有效
-<br><br>
-
-###  __1.114 `DexCapEndPoses`__
-__声明：__
-```
-typedef struct DexCapEndPoses_t
-{
-    double LArm[4][4];
-    double RArm[4][4];
-    uint64_t timestamp;
-} DexCapEndPoses;
-```
-
-__文件：__typedef.h
-
-C/C++接口通用，结构体。DexCap上肢外骨骼双臂末端(腕部)位姿数据。
-<br><br>
-
-
-###  __1.115 `DexCapJointDataProc`__
+###  __1.23 `DexCapSuitDataProc`__
 __声明 ：__
-```typedef void (* DexCapJointDataProc)(const DexCapJointData *);```
+```typedef void (* DexCapSuitDataProc)(const SuitStatusData *);```
 
 __文件：__`typedef.h`
 
-C接口，函数指针声明，该函数接受一个DexCapJointData的指针作为入参。
+C/C++通用接口，函数指针声明，该函数接受一个SuitStatusData的指针作为入参。
 用户可按照该声明以及自己的数据处理逻辑，实现自己的DexCap套设备数据处理函数，并将该函数通过register_joint_data_callback()接口注册给DexCap SDK作为数据处理的回调函数。
-SDK内部逻辑会将实时采集到的数据同步时间戳之后装载到一个DexCapJointData临时对象中，并将该对象的指针作为输入参数传递给该回调函数。
-<br><br>
-
-###  __1.16 `DexCapStatusDataProc`__
-__声明 ：__
-```
-using DexCapStatusDataProc = std::function<void (const DexCapJointData *)>;
-```
-__文件：__ `DexCap.hpp`
-
-C++接口专用。形式为`std::function<void (const DexCapJointData *)>`的函数封装器，作用与DexCapJointDataProc相同：
-用户自行实现该函数注册给SDK作为回调函数，在该函数中用户使用自定义的逻辑实时地接收和处理DexCapSuit套设备所有关节的原始数据。
-该函数接受一个类型为DexCapJointData的常量指针，SDK内部后台线程会实时地将采集到的所有设备关节数据装载在该对象中，并以指针的形式传给该回调函数。
-需要注意的是，由于SDK会实时地将采集数据封装进DexCapJointData对象中，因而持有数据的该对象，在用户注册的回调函数被调用完成后，该DexCapJointData
-对象将被立即销毁或其持有的数据会被后续采样的数据覆盖，因而用户需要在回调函数中立即将该指针中的数据拷贝到自己应用程序的缓存中，以保持数据的有效性及避免程序因为内存被回收后再次访问而崩溃。
-<br><br>
-
-
-###  __1.17 `SuitJointState`__
-__声明 ：__
-```
-struct SuitJointState
-{
-    DexCapJointData jointData;
-    MainBatteryState mainBatteryState;
-    ......
-};
-```
-__文件：__`TypeDef.hpp`__
-C++接口使用，DexCap套设备完整数据。该结构体包含DexCap套设备所有自由度的关节角度数据，以及DexCap上肢设备主电池的状态信息。
+SDK内部逻辑会将实时采集到的数据同步时间戳之后装载到一个SuitStatusData临时对象中，并将该对象的指针作为输入参数传递给该回调函数。
 <br><br>
 
 
@@ -293,7 +211,7 @@ class DexCapSuit;
 ```
 __文件：__`DexCap.hpp`
 
-C++接口核心类，DexCapSuit代表一套完整的DexCap套设备，即包括上肢外骨骼和左右手手套。
+C++接口核心类，DexCapSuit代表一套完整的DexCap套设备，即包括上肢外骨骼和左右手手柄。
 DexCapSuit类提供DexCap套设备向用户开放的所有管理接口和数据访问接口。包括与设备的连接管理，状态管理和监测，实时数据访问。
 DexCapSuit类不强制要求上述所有设备在线才能使用该类的对象，用户在单独使用上肢外骨骼，左右手手套这些设备中的任一设备时，都可以使用该类的实例对象对单个设备进行操作。
 同时DexCapSuit类不支持在同一实例中使用多个同类型设备，所有自设备数必须为唯一，即使用DexCapSuit对象时，仅支持单一的上肢外骨骼，以及单一的左/右手手套。
@@ -305,7 +223,7 @@ DexCapSuit类不强制要求上述所有设备在线才能使用该类的对象�
 __声明 ：__
 ```
 DexCapSuit() = delete;
-explicit DexCapSuit(ProductVersion version, const std::string & configFile = "./config.yaml");
+explicit DexCapSuit(AdapterType connectionType, ProductVersion version=V4C1);
 ```
 __文件：__`DexCap.hpp`
 
@@ -313,45 +231,46 @@ DexCapSuit类不支持无参构造，用户在构造实例时必须提供产品�
 
 __参数说明：__
 
-| 参数名    | 参数类型                 | 含义                 | 补充说明                                             |
-|--------|----------------------|--------------------|--------------------------------------------------|
-| version | ProductVersion       | DexCap产品的版本        | DexCap产品历史发行的设备版本包括V3.5和V4。目前SDK完成了产品适配的版本仅支持V4。 |
-| configFile | const std::string &  | 配置文件的路径，适用于V3.5版设备 | V4用户请忽略该参数                                       |
+| 参数名    | 参数类型                | 含义                                                     | 补充说明                                             |
+|--------|---------------------|--------------------------------------------------------|--------------------------------------------------|
+| connectionType | AdapterType  | 连接DexCap设备的方式，如WIREDUSB表示使用USB有线连接，WLAN_TCP则表示使用Wifi连接 |  |
+| version | ProductVersion | DexCap设备的硬件版本                                          | V4用户请忽略该参数                                       |
 <br><br>
 
 
 ###  __2.3 `DexCapSuit::ConnectDevice`__
 __声明 ：__
 ```
-virtual ExoApparatus ConnectDevice(const std::string & adapterName, AdapterType adapterType);
+virtual ExoApparatus ConnectDevice(const std::string & deviceAddress);
 ```
 __文件：__`DexCap.hpp`
 
-通过给定的适配器设备名称和适配器类型连接指定的DexCap设备。适配器设备名即运行SDK及应用程序的PC系统，通过DexCap设备的连接适配器所识别出的设备名称。
+通过给定的设备地址，连接DexCap设备。如果是通过串口连接，设备地址即PC系统通过DexCap设备的连接适配器所识别出的设备名称。
 例如当DexCap设备通过USB串口连接至电脑时，适配器设备名即为系统为该串口分配的枚举名。通常在Windows系统上，该名称为COM*。
-在Linux上该名称通常为/dev/ttyUSB*或者/dev/ttyACM*。如果设备使用蓝牙，则适配器设备名即设备的蓝牙名称。
+在Linux上该名称通常为/dev/ttyUSB*或者/dev/ttyACM*。如果设备使用Wifi连接，设备地址即设备连接到无线局域网后的IP地址。
 
 __参数说明：__
 
-| 参数名    | 参数类型                | 含义             | 补充说明                                                  |
-|--------|---------------------|----------------|-------------------------------------------------------|
-| adapterName | const std::string & | 系统分配给设备适配器的枚举名 | 对于串口，Windows上为COM*，Linux上通常为/dev/ttyUSB*或/dev/ttyACM* |
-| adapterType | AdapterType         | 连接适配器类型        | 取值参考2.1.4。V4用户常用取值为WIREDUSB和BLUETOOTH                 |
+| 参数名    | 参数类型                | 含义                      | 补充说明                                                  |
+|--------|---------------------|-------------------------|-------------------------------------------------------|
+| deviceAddress | const std::string & | 设备的串口路径(枚举)名，或无线局域网IP地址 | 对于串口，Windows上为COM*，Linux上通常为/dev/ttyUSB*或/dev/ttyACM* |
 
 __返回值说明：__
 
 返回类型ExoApparatus表示DexCap设备的类型，如上肢外骨骼，手套或其他。函数调用时，SDK与设备的连接适配器发起连接。
-连接成功建立后SDK会自动读取设备的固件信息以获得设备的类型，ID等基本信息。
-设备基本信息成功加载后，函数调用返回该设备的真实类型。如未能成功建立连接或未能成功从固件加载设备信息，则返回UnDef,表示未知的设备。
-如果返回UnDef并不总是表示该设备不是DexCap设备或设备故障了，对于不稳定的连接，也有可能导致SDK未能成功或及时加载设备信息，例如不稳定的蓝牙连接，可能导致固件
-的信息加载超时从而导致该函数返回UnDef。遇到这种情况时用户可尝试增加连接尝试的次数来确保SDK与设备能完整的建立连接。
+连接成功建立后，SDK会自动读取设备的固件信息以获得设备的类型，ID等基本信息。
+设备基本信息成功加载后，函数调用返回该设备的真实类型。如未能成功建立连接或未能成功从固件加载设备信息，则返回UnDef，表示未知的设备。
+如果返回UnDef，并不总是表示该设备不是DexCap设备。如备故障，不稳定的连接(如USB供电不稳定，或WLAN网络不稳定，环境干扰强等)，或是设备
+在前一次采集任务结束后未被置为待机状态(即传感器使能和采样未关闭)，均有可能导致设备固件未能在预计时间将设备信息上报给SDK，从而使得
+SDK加载设备信息失败而返回UnDef。遇到这种情况时，如用户确信所使用的设备是DexCap设备，可尝试将设备下电再重新上电后，重新发起连接。
+如多次重连均失败后，则考虑设备已经故障。
 <br><br>
 
 
 ###  __2.4 `DexCapSuit::DisconnectDevice`__
 __声明 ：__
 ```
-virtual bool DisconnectDevice(const std::string & adapterName);
+virtual bool DisconnectDevice(const std::string & deviceAddress);
 virtual bool DisconnectDevice(ExoApparatus device);
 ```
 __文件：__ `DexCap.hpp`
@@ -361,10 +280,10 @@ SDK与设备断开时，会主动将设备的传感器使能关闭，并在固�
 
 __参数说明：__
 
-| 参数名    | 参数类型                | 含义                                       | 补充说明 |
-|--------|---------------------|------------------------------------------|------|
-| adapterName | const std::string & | 系统分配给设备适配器的枚举名                           |      |
-| device | ExoApparatus         | 设备类型，如上肢外骨骼(UpBody),或手套(LGlove/RGlove)，等 |      |
+| 参数名    | 参数类型                | 含义                                              | 补充说明 |
+|--------|---------------------|-------------------------------------------------|------|
+| adapterName | const std::string & | 系统分配给设备适配器的枚举名                                  |      |
+| device | ExoApparatus         | 设备类型，如上肢外骨骼(UpBody/JSBody),或手套(LGlove/RGlove)，等 |      |
 
 __返回值说明：__
 
@@ -385,9 +304,9 @@ __文件：__ `DexCap.hpp`
 
 __参数说明：__
 
-| 参数名    | 参数类型                | 含义                                       | 补充说明 |
-|--------|---------------------|------------------------------------------|------|
-| device | ExoApparatus         | 设备类型，如上肢外骨骼(UpBody),或手套(LGlove/RGlove)，等 |      |
+| 参数名    | 参数类型                | 含义                                              | 补充说明 |
+|--------|---------------------|-------------------------------------------------|------|
+| device | ExoApparatus         | 设备类型，如上肢外骨骼(UpBody/JSBody),或手套(LGlove/RGlove)，等 |      |
 
 __返回值说明：__
 
@@ -420,9 +339,9 @@ __文件：__ `DexCap.hpp`
 
 __参数说明：__
 
-| 参数名    | 参数类型                | 含义                                       | 补充说明 |
-|--------|---------------------|------------------------------------------|------|
-| device | ExoApparatus         | 设备类型，如上肢外骨骼(UpBody),或手套(LGlove/RGlove)，等 |      |
+| 参数名    | 参数类型                | 含义                                             | 补充说明 |
+|--------|---------------------|------------------------------------------------|------|
+| device | ExoApparatus         | 设备类型，如上肢外骨骼(UpBody/JSBody),或手套(LGlove/RGlove)，等 |      |
 
 __返回值说明：__
 指定设备的ID。如指定的设备未连接，则返回0;
@@ -440,9 +359,9 @@ __文件：__ `DexCap.hpp`
 
 __参数说明：__
 
-| 参数名    | 参数类型                | 含义                                       | 补充说明 |
-|--------|---------------------|------------------------------------------|------|
-| device | ExoApparatus         | 设备类型，如上肢外骨骼(UpBody),或手套(LGlove/RGlove)，等 |      |
+| 参数名    | 参数类型                | 含义                                             | 补充说明 |
+|--------|---------------------|------------------------------------------------|------|
+| device | ExoApparatus         | 设备类型，如上肢外骨骼(UpBody/JSBody),或手套(LGlove/RGlove)，等 |      |
 
 __返回值说明：__
 以字符串的形式返回指定设备出厂序列号。如指定的设备未连接，则返回空字符串;
@@ -464,9 +383,9 @@ __文件：__ `DexCap.hpp`
 
 __参数说明：__
 
-| 参数名    | 参数类型                | 含义                                       | 补充说明 |
-|--------|---------------------|------------------------------------------|------|
-| device | ExoApparatus         | 设备类型，如上肢外骨骼(UpBody),或手套(LGlove/RGlove)，等 |      |
+| 参数名    | 参数类型                | 含义                                              | 补充说明 |
+|--------|---------------------|-------------------------------------------------|------|
+| device | ExoApparatus         | 设备类型，如上肢外骨骼(UpBody/JSBody),或手套(LGlove/RGlove)，等 |      |
 
 __返回值说明：__
 重载形式1：成功返回true, 失败则返回false。
@@ -486,36 +405,16 @@ __文件：__ `DexCap.hpp`
 
 __参数说明：__
 
-| 参数名    | 参数类型                | 含义                                       | 补充说明 |
-|--------|---------------------|------------------------------------------|------|
-| device | ExoApparatus         | 设备类型，如上肢外骨骼(UpBody),或手套(LGlove/RGlove)，等 |      |
+| 参数名    | 参数类型                | 含义                                                       | 补充说明 |
+|--------|---------------------|----------------------------------------------------------|------|
+| device | ExoApparatus         | 设备类型，如上肢外骨骼(UpBody/JSBody),或手套(LGlove/RGlove)，等 |      |
 
 __返回值说明：__
 成功返回true, 失败则返回false。
 <br><br>
 
 
-###  __2.11 `DexCapSuit::IsBluetoothConnected`__
-__声明 ：__
-```
-bool IsBluetoothConnected(ExoApparatus device) const;
-```
-__文件：__ `DexCap.hpp`
-
-获知指定的设备是否已已通过蓝牙连接。
-
-__参数说明：__
-
-| 参数名    | 参数类型                | 含义                                       | 补充说明 |
-|--------|---------------------|------------------------------------------|------|
-| device | ExoApparatus         | 设备类型，如上肢外骨骼(UpBody),或手套(LGlove/RGlove)，等 |      |
-
-__返回值说明：__
-成功返回true, 失败则返回false。
-<br><br>
-
-
-###  __2.12 `DexCapSuit::IsRunning`__
+###  __2.11 `DexCapSuit::IsRunning`__
 __声明 ：__
 ```
 bool IsRunning() const;
@@ -531,14 +430,14 @@ __参数说明：__
 
 | 参数名    | 参数类型                | 含义                                       | 补充说明 |
 |--------|---------------------|------------------------------------------|------|
-| device | ExoApparatus         | 设备类型，如上肢外骨骼(UpBody),或手套(LGlove/RGlove)，等 |      |
+| device | ExoApparatus         | 设备类型，如上肢外骨骼(UpBody/JSBody),或手套(LGlove/RGlove)，等 |      |
 
 __返回值说明：__
 成功返回true, 失败则返回false。
 <br><br>
 
 
-###  __2.13 `DexCapSuit::Pause`__
+###  __2.12 `DexCapSuit::Pause`__
 __声明 ：__
 ```
 DEX_RETURN Pause();
@@ -554,14 +453,14 @@ __参数说明：__
 
 | 参数名    | 参数类型                | 含义                                       | 补充说明 |
 |--------|---------------------|------------------------------------------|------|
-| device | ExoApparatus         | 设备类型，如上肢外骨骼(UpBody),或手套(LGlove/RGlove)，等 |      |
+| device | ExoApparatus         | 设备类型，如上肢外骨骼(UpBody/JSBody),或手套(LGlove/RGlove)，等 |      |
 
 __返回值说明：__
 成功返回true, 失败则返回false。
 <br><br>
 
 
-###  __2.14 `DexCapSuit::Resume`__
+###  __2.13 `DexCapSuit::Resume`__
 __声明 ：__
 ```
 DEX_RETURN Resume();
@@ -577,7 +476,7 @@ __参数说明：__
 
 | 参数名    | 参数类型                | 含义                                       | 补充说明 |
 |--------|---------------------|------------------------------------------|------|
-| device | ExoApparatus         | 设备类型，如上肢外骨骼(UpBody),或手套(LGlove/RGlove)，等 |      |
+| device | ExoApparatus         | 设备类型，如上肢外骨骼(UpBody/JSBody),或手套(LGlove/RGlove)，等 |      |
 
 __返回值说明：__
 成功返回true, 失败则返回false。
@@ -600,7 +499,7 @@ __参数说明：__
 
 | 参数名    | 参数类型                | 含义                                       | 补充说明 |
 |--------|---------------------|------------------------------------------|------|
-| device | ExoApparatus         | 设备类型，如上肢外骨骼(UpBody),或手套(LGlove/RGlove)，等 |      |
+| device | ExoApparatus         | 设备类型，如上肢外骨骼(UpBody/JSBody),或手套(LGlove/RGlove)，等 |      |
 
 __返回值说明：__
 成功返回DEX_SUCCESS。全部失败则返回DEX_ERROR。
@@ -618,118 +517,109 @@ AdapterType GetAdapterType() const;
 ```
 __文件：__ `DexCap.hpp`
 
-获知当前所有设备是通过什么方式连接到SDK的。该函数没有指定具体设备的重载形式，而是以优先监测到的设备的连接状态作为其返回值。
-通常情况下，DexCap SDK不强制用户使用同样的连接方式来连接全部设备，但会记录连接形式不一致的情况，并将整体采样率降低到所有使用的连接形式中，数据传输率最低的连接形式。
+获知当前SDK与DexCap套设备的连接类型。
 
 __返回值说明：__
-优先监测到的设备的连接适配器类型。如无任何设备连接，则返回INVALID。
+DexCap设备的连接适配器类型。
+如使用USB串口连接，则返回WIREDUSB。
+如使用Wifi连接，则返回WLAN_TCP。
+若无任何设备连接，则返回INVALID。
 <br><br>
 
 
 ###  __2.16 `DexCapSuit::GetDeviceType`__
 __声明 ：__
 ```
-ExoApparatus GetDeviceType(const std::string & adapterName) const;
+ExoApparatus GetDeviceType(const std::string & adapterAddress) const;
 ```
 __文件：__ `DexCap.hpp`
 
-获知指定的连接适配器设备名的DexCap设备类型
+获知指定的连接适配器设备名的DexCap设备类型。
 
 __参数说明：__
 
 | 参数名    | 参数类型                | 含义                                       | 补充说明 |
 |--------|---------------------|------------------------------------------|------|
-| device | ExoApparatus         | 设备类型，如上肢外骨骼(UpBody),或手套(LGlove/RGlove)，等 |      |
+| device | ExoApparatus         | 设备类型，如上肢外骨骼(UpBody/JSBody),或手套(LGlove/RGlove)，等 |      |
 
 __返回值说明：__
-指定的适配器设备名对应的DexCap设备类型。
+指定的适配器设备地址对应的DexCap设备类型。对于V4C1设备，该函数返回值永远为UpBody或JSBody。
 <br><br>
 
 
 ###  __2.17 `DexCapSuit::GetSuitJointState`__
 __声明 ：__
 ```
-const SuitJointState & GetSuitJointState() const;
+const SuitStatusData & GetSuitJointState() const;
 ```
 __文件：__ `DexCap.hpp`
 
-获取DexCap套设备所有关节当前时刻的角度数据。
+获取DexCap套设备所有关节当前时刻的角度数据，以及系统当前时刻的状态数据。
+系统状态数据包括主控电池的电量，实时电流等状态数据，已经SystemStatus中列举的数据。
 
 __返回值说明：__
-SuitJointState的常量引用。关于SuitJointState对象中数据的详细说明请参见2.1.16的说明。应用程序运行过程中，SDK会
-将从设备采集到的数据实时更新到内部缓存中，因而SuitJointState中的数据会不断的被更新。建议使用该接口获取设备关节数据
+SuitStatusData的const引用。关于SuitStatusData对象中数据的详细说明请参见2.1.16的说明。应用程序运行过程中，SDK会
+将从设备采集到的数据实时更新到内部缓存中，因而SuitStatusData中的数据会不断的被更新。建议使用该接口获取设备关节数据
 的用户，在取得该对象引用时即将其中数据拷贝至自己应用程序的缓存中，以保持数据的有效性。
 <br><br>
 
 
-###  __2.18 `DexCapSuit::GetBodyJointState`__
+###  __2.18 `DexCapSuit::GetArmsJointsState`__
 __声明 ：__
 ```
-const SkeletonJointAngles & GetBodyJointState() const;
+const SkeletonArmsData & GetArmsJointsState() const;
 ```
 __文件：__ `DexCap.hpp`
 
 获取DexCap上肢外骨骼设备中所有关节当前时刻的角度数据，即双臂和腰部自由度的角度数据。
 
 __返回值说明：__
-SkeletonJointAngles的常量引用。关于SkeletonJointAngles对象中数据的详细说明请参见2.1.10的说明。应用程序运行过程中，SDK会
-将从设备采集到的数据实时更新到内部缓存中，因而SkeletonJointAngles中的数据会不断的被更新。建议使用该接口获取设备关节数据
+SkeletonArmsData的const引用。关于SkeletonArmsData对象中数据的详细说明请参见1.19的说明。应用程序运行过程中，SDK会
+将从设备采集到的数据实时更新到内部缓存中，因而SkeletonArmsData中的数据会不断的被更新。建议使用该接口获取设备关节数据
 的用户，在取得该对象引用时即将其中数据拷贝至自己应用程序的缓存中，以保持数据的有效性。
 <br><br>
 
 
-###  __2.19 `DexCapSuit::GetLeftGloveJointState`__
+###  __2.19 `DexCapSuit::GetLJoyStickState`__
 __声明 ：__
 ```
-const GloveJointAngles & GetLeftGloveJointState() const;
+const Joystick & GetLJoyStickState() const;
 ```
 __文件：__ `DexCap.hpp`
 
-获取DexCap左手手套设备中所有关节当前时刻的角度数据。
+获取左手手柄的状态数据。
 
 __返回值说明：__
-GloveJointAngles的常量引用，包含左手手套中所有关节当前时刻的角度数据。关于GloveJointAngles对象中数据的详细说明请参见2.1.9的说明。
-应用程序运行过程中，SDK会将从设备采集到的数据实时更新到内部缓存中，因而GloveJointAngles中的数据会不断的被更新。建议使用该接口获取设备关节数据
+Joystick的const引用。关于Joystick对象中数据的详细说明请参见1.18的说明。应用程序运行过程中，SDK会
+将从设备采集到的数据实时更新到内部缓存中，因而Joystick中的数据会不断的被更新。建议使用该接口获取设备关节数据
 的用户，在取得该对象引用时即将其中数据拷贝至自己应用程序的缓存中，以保持数据的有效性。
 <br><br>
 
 
-###  __2.20 `DexCapSuit::GetRightGloveJointState`__
+###  __2.20 `DexCapSuit::GetRJoyStickState`__
 __声明 ：__
 ```
-const GloveJointAngles & GetRightGloveJointState() const;
+const Joystick & GetRJoyStickState() const;
 ```
 __文件：__ `DexCap.hpp`
 
-获取DexCap右手手套设备中所有关节当前时刻的角度数据。
+获取右手手柄的状态数据。
 
 __返回值说明：__
-GloveJointAngles的常量引用，包含右手手套中所有关节当前时刻的角度数据
+Joystick的const引用。关于Joystick对象中数据的详细说明请参见1.18的说明。应用程序运行过程中，SDK会
+将从设备采集到的数据实时更新到内部缓存中，因而Joystick中的数据会不断的被更新。建议使用该接口获取设备关节数据
+的用户，在取得该对象引用时即将其中数据拷贝至自己应用程序的缓存中，以保持数据的有效性。
 <br><br>
 
 
-###  __2.21 `DexCapSuit::GetInertialMUJointState`__
-__声明 ：__
-```
-const InertialUnitData & GetInertialMUJointState() const;
-```
-__文件：__ `DexCap.hpp`
-
-获取DexCap右手手套设备中所有关节当前时刻的角度数据。
-
-__返回值说明：__
-InertialUnitData的常量引用，包含腰部IMU的位姿和状态数据。
-<br><br>
-
-
-###  __2.22 `DexCapSuit::IsChargeNeeded`__
+###  __2.21 `DexCapSuit::IsChargeNeeded`__
 __声明 ：__
 ```
 bool IsChargeNeeded(ExoApparatus device) const;
 ```
 __文件：__ `DexCap.hpp`
 
-获知当前指定设备的电池是否需要充电。如果用户使用蓝牙进行通信，且设备未插入USB供电进行充电时，设备的角度传感器采集的数据准确性
+获知当前指定设备的电池是否需要充电。如果用户使用WLAN进行通信，且设备未插入USB供电进行充电时，设备的角度传感器采集的数据准确性
 取决于其供电状况，当电压低于一定的阈值时，传感器采集的数据会失真，这个时候需要对设备的电池进行充电。DexCap系统会根据电池当前
 的状态以及设定的阈值来判断当前电池是否需要充电。
 
@@ -738,23 +628,7 @@ __返回值说明：__
 <br><br>
 
 
-###  __2.23 `DexCapSuit::GetEndPose`__
-__声明 ：__
-```
-const DexCapEndPoses & GetEndPose() const;
-```
-__文件：__ `DexCap.hpp`
-
-获取当前时刻DexCap上肢外骨骼设备的末端位姿数据，即左手腕和右手腕当前时刻的位姿矩阵。
-
-__返回值说明：__
-DexCapEndPoses的常量引用。DexCap系统运行过程中，SDK会实时计算上肢外骨骼双臂的末端位姿，并用计算结果实时更新
-内部的缓存数据，即缓存的DexCapEndPoses对象。建议用户通过该接口获取到数据后，立即拷贝至自己的缓存中，以保持数据
-的有效性。
-<br><br>
-
-
-###  __2.24 `DexCapSuit::GetBatteryLevel`__
+###  __2.22 `DexCapSuit::GetBatteryLevel`__
 __声明 ：__
 ```
 uint16_t GetBatteryLevel(ExoApparatus device) const;
@@ -774,40 +648,21 @@ __返回值说明：__
 <br><br>
 
 
-###  __2.25 `DexCapSuit::GetMainBatteryState`__
+###  __2.23 `DexCapSuit::GetMainBatteryStatus`__
 __声明 ：__
 ```
-const MainBatteryState *GetMainBatteryState() const;
+const MainBatteryStatus *GetMainBatteryStatus() const;
 ```
 __文件：__ `DexCap.hpp`
 
 获取当前时刻上肢外骨骼主电池的状态数据。
 
 __返回值说明：__
-指向SDK内部缓存的MainBatteryState对象的常量指针。关于MainBatteryState内部数据结构的说明，请参考2.1.11。
+指向SDK内部缓存的MainBatteryStatus对象的常量指针。关于MainBatteryStatus内部数据结构的说明，请参考1.22。
 <br><br>
 
 
-###  __2.26 `DexCapSuit::VibeMotors`__
-__声明 ：__
-```
-void VibeMotors(ExoApparatus hand, const std::vector<uint8_t> & vibeVals) const;
-```
-__文件：__ `DexCap.hpp`
-
-向DexCap手套发送震动指尖振动电机的控制指令。其中震动电机的震动强度由参数vibeVals给定，其中每个元素依次代表对应手指
-的震动强度值。向量vibeVals的元素个数最多为5，多余5的元素将被忽略，少于5时，对应索引的手指震动强度被设为0。
-
-__参数说明：__
-
-| 参数名    | 参数类型                | 含义                                                                                | 补充说明 |
-|--------|---------------------|-----------------------------------------------------------------------------------|------|
-| device | ExoApparatus         | 设备类型，仅DexCap手套(LGlove/RGlove)支持指尖震动                                               |      |
-| vibeVals |  const std::vector<uint8_t> & | 代表各手指指尖震动电机震动强度值的向量，从索引0开始，依次代表大拇指，食指，到小拇指。元素个数小于5时，对应手指震动强度强制为0，元素个数大于5时，多余元素被忽略 |      |
-<br><br>
-
-
-###  __2.27 `DexCapSuit::GetFirmwareVersion`__
+###  __2.24 `DexCapSuit::GetFirmwareVersion`__
 __声明 ：__
 ```
 std::string GetFirmwareVersion(ExoApparatus device) const;
@@ -830,7 +685,7 @@ __返回值说明：__
 <br><br>
 
 
-###  __2.28 `DexCapSuit::anyError`__
+###  __2.25 `DexCapSuit::anyError`__
 __声明 ：__
 ```
 bool anyError(ExoApparatus device) const;
@@ -852,7 +707,7 @@ __返回值说明：__
 <br><br>
 
 
-###  __2.29 `DexCapSuit::getErrorCode`__
+###  __2.26 `DexCapSuit::getErrorCode`__
 __声明 ：__
 ```
 ErrorCode getErrorCode() const;
@@ -876,7 +731,7 @@ __返回值说明：__
 <br><br>
 
 
-###  __2.30 `DexCapSuit::getErrorMessage`__
+###  __2.27 `DexCapSuit::getErrorMessage`__
 __声明 ：__
 ```
 const std::string & getErrorMessage();
@@ -900,19 +755,20 @@ __返回值说明：__
 <br><br>
 
 
-###  __2.31 `DexCapSuit::registerStatusDataProc`__
+###  __2.28 `DexCapSuit::registerStatusDataProc`__
 __声明 ：__
 ```
-void registerStatusDataProc(const DexCapStatusDataProc & callback);
+void registerStatusDataProc(const DexCapSuitDataProc & callback);
 ```
 __文件：__ `DexCap.hpp`
 
-注册一个形式如DexCapStatusDataProc的声明的函数，作为接收和处理DexCapSuit套设备所有关节原始实时数据的回调函数。该函数接收一个类型为const DexCapJointData *的指针作为参数。
-关于用户实现该函数的详细说明，请参考2.1.16章节。
+注册一个形式如DexCapSuitDataProc的声明的函数，作为接收和处理DexCapSuit套设备所有关节原始实时数据的回调函数。
+该函数接收一个类型为const SuitStatusData *的指针作为参数。
+关于用户实现该函数的详细说明，请参考1.23章节。
 
 __参数说明：__
 
 | 参数名    | 参数类型                | 含义                       | 补充说明 |
 |--------|---------------------|--------------------------|------|
-| callback | DexCapStatusDataProc   | 用户希望注册给DexCapSuit实例的回调函数 |      |
+| callback | DexCapSuitDataProc   | 用户希望注册给DexCapSuit实例的回调函数 |      |
 <br><br>

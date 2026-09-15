@@ -20,7 +20,6 @@ static const std::map<ExoApparatus, std::string> DEVICE_NAMES = {
     { LGlove, "左手套" },
     { RGlove, "右手套" },
     { UpBody, "外骨骼" },
-    { IMUnit, "陀螺仪" },
 };
 
 
@@ -63,83 +62,72 @@ char * CmdReadLine(void)
 /// A log file for recording sensor data stream
 std::fstream logFile;
 
-void SensorDataCallback(const DexCapJointData * data)
+void SensorDataCallback(const SuitStatusData* data)
 {
     if (data == nullptr)
         return;
 
-    const auto & datetime = timestamp_to_datetime_string(data->timestamp);
+    const SkeletonArmsData* armsData = &data->jointData;
+    printf("[L Arm]: Joint1=%.2f, Joint2=%.2f, Joint3=%.2f, Joint4=%.2f, Joint5=%.2f, Joint6=%.2f, Joint7=%.2f\n",
+           (double)armsData->LArm1 / 100,
+           (double)armsData->LArm2 / 100,
+           (double)armsData->LArm3 / 100,
+           (double)armsData->LArm4 / 100,
+           (double)armsData->LArm5 / 100,
+           (double)armsData->LArm6 / 100,
+           (double)armsData->LArm7 / 100);
 
-    if (data->mask & 0x8000)
-    {
-        std::string row = "[Left Glove]-[" + datetime + "]: ";
-        size_t totalCnt = sizeof(data->LGlove)/sizeof(uint16_t);
-        size_t jointCnt = totalCnt - 3;
-        uint32_t errorMask = (data->LGlove[totalCnt-2] << 16) | data->LGlove[totalCnt-1];
-        for (int i=0; i < jointCnt; ++i)
-        {
-            if(errorMask & FingersErrorMask[i])
-            {
-                row += "Joint" + std::to_string(i+1) + "=ERR, ";
-            }
-            else
-            {
-                row += "Joint" + std::to_string(i+1) + "=" + std::to_string((double)data->LGlove[i]/100) + ", ";
-            }
-        }
+    printf("[R Arm]: Joint1=%.2f, Joint2=%.2f, Joint3=%.2f, Joint4=%.2f, Joint5=%.2f, Joint6=%.2f, Joint7=%.2f\n",
+           (double)armsData->RArm1 / 100,
+           (double)armsData->RArm2 / 100,
+           (double)armsData->RArm3 / 100,
+           (double)armsData->RArm4 / 100,
+           (double)armsData->RArm5 / 100,
+           (double)armsData->RArm6 / 100,
+           (double)armsData->RArm7 / 100);
 
-        logFile << row << std::endl;
-    }
+    printf("[L JoyStick]: Button A clicked=%s, Button B clicked=%s, Axis X=%d, Axis Y=%d,"
+           " Axis Z clicked=%s, Trigger A=%d, Trigger B=%d, Trigger A clicked=%s, Trigger B clicked=%s\n",
+           armsData->LJoyS.ButtonA ? "Yes" : "No",
+           armsData->LJoyS.ButtonB ? "Yes" : "No",
+           armsData->LJoyS.RockerX,
+           armsData->LJoyS.RockerY,
+           armsData->LJoyS.RockerZ ? "Yes" : "No",
+           armsData->LJoyS.TgrDistA,
+           armsData->LJoyS.TgrDistB,
+           armsData->LJoyS.TriggerA ? "Yes" : "No",
+           armsData->LJoyS.TriggerB ? "Yes" : "No"
+    );
 
-    if (data->mask & 0x4000)
-    {
-        std::string row = "[Exo UpBody]-[" + datetime + "]: ";
-        size_t totalCnt = sizeof(data->ExBody)/sizeof(uint16_t);
-        size_t jointCnt = totalCnt - 1;
-        uint16_t batterState = data->ExBody[totalCnt-1];
-        for (int i=0; i < jointCnt; ++i)
-        {
-            printf("Joint%d: %.2f, ", i+1, (double)data->ExBody[i]/100);
-            row += "Joint" + std::to_string(i+1) + "=" + std::to_string((double)data->ExBody[i]/100) + ", ";
-        }
-        logFile << row << std::endl;
-    }
+    printf("[R JoyStick]: Button A clicked=%s, Button B clicked=%s, Axis X=%d, Axis Y=%d,"
+           " Axis Z clicked=%s, Trigger A=%d, Trigger B=%d, Trigger A clicked=%s, Trigger B clicked=%s\n",
+           armsData->RJoyS.ButtonA ? "Yes" : "No",
+           armsData->RJoyS.ButtonB ? "Yes" : "No",
+           armsData->RJoyS.RockerX,
+           armsData->RJoyS.RockerY,
+           armsData->RJoyS.RockerZ ? "Yes" : "No",
+           armsData->RJoyS.TgrDistA,
+           armsData->RJoyS.TgrDistB,
+           armsData->RJoyS.TriggerA ? "Yes" : "No",
+           armsData->RJoyS.TriggerB ? "Yes" : "No"
+    );
 
-    if (data->mask & 0x2000)
-    {
-        std::string row = "[Right Glove]-[" + datetime + "]: ";
-        size_t totalCnt = sizeof(data->RGlove)/sizeof(uint16_t);
-        size_t jointCnt = totalCnt - 3;
-        uint32_t errorMask = (data->LGlove[totalCnt-2] << 8) | data->LGlove[totalCnt-1];
-        for (int i=0; i < jointCnt; ++i)
-        {
-            if(errorMask & FingersErrorMask[i])
-            {
-                row += "Joint" + std::to_string(i+1) + "=ERR, ";
-            }
-            else
-            {
-                row += "Joint" + std::to_string(i+1) + "=" + std::to_string((double)data->RGlove[i]/100) + ", ";
-            }
-        }
-
-        logFile << row << std::endl;
-    }
-
-    logFile << std::endl;
+    printf("===============================================\n\n");
 }
 
-void RunDexCapExample(int seconds=30 /* Run for secdons */)
+
+void RunDexCapExample(int timespan=30 /* Run for secdons */)
 {
     const auto device_list = alloc_serial_port_device_list();
     size_t device_count = 0;
     enumerate_serial_port_devices(ProductVersion::V4, device_list, &device_count);
-    DexCapSuit dexCapSuit(ProductVersion::V4);
+
+    DexCapSuit dexCapSuit(WIREDUSB);
     dexCapSuit.registerStatusDataProc(SensorDataCallback);
 
-    for (int i=0; i < device_count; ++i)
+    for (int i = 0; i < device_count; ++i)
     {
-        const auto deviceType = dexCapSuit.ConnectDevice(device_list[i].serial_port_name, AdapterType::WIREDUSB);
+        const auto deviceType = dexCapSuit.ConnectDevice(device_list[i].serial_port_name);
 
         if (deviceType == ExoApparatus::UnDefn)
         {
@@ -160,9 +148,9 @@ void RunDexCapExample(int seconds=30 /* Run for secdons */)
             << " on " << device_list[i].serial_port_name << std::endl;
 
         auto fmwVersion = dexCapSuit.GetFirmwareVersion(deviceType);
-        std::cout << "Device firmware version: " << fmwVersion << std::endl;
+        std::cout << "Device " << DEVICE_NAMES.at(deviceType) << " firmware version: " << fmwVersion << std::endl;
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
     const auto startTs = current_timestamp();
@@ -170,104 +158,75 @@ void RunDexCapExample(int seconds=30 /* Run for secdons */)
     logFile.open(logFileName, std::ios_base::out | std::ios_base::app);
     std::cout << "Output log file: " << logFileName << std::endl;
 
-    dexCapSuit.Start();
-
-    bool timeout = false;
-    uint64_t lastTimestamp = current_timestamp();
-    do {
-        const auto & endPoses = dexCapSuit.GetEndPose();
-        if (lastTimestamp == endPoses.timestamp)
-            continue;
-
-        lastTimestamp = endPoses.timestamp;
-        const auto timeStr = timestamp_to_datetime_string(lastTimestamp);
-        printf("[%s]:\n", timeStr.c_str());
-        printf("Left Arm:\n[\n");
-        for (const auto & row : endPoses.LArm)
-        {
-            printf("  [");
-            for (const auto & pose : row)
-            {
-                printf("%f, ", pose);
-            }
-            printf("  ]\n");
-        }
-        printf("]\n");
-
-        printf("Right Arm:\n[\n");
-        for (const auto & row : endPoses.RArm)
-        {
-            printf("  [");
-            for (const auto & pose : row)
-            {
-                printf("%f, ", pose);
-            }
-            printf("  ]\n");
-        }
-        printf("]\n");
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        const auto currentTs = current_timestamp();
-        const auto duration = currentTs - startTs;
-        timeout = duration >= seconds * 1000;
-    } while (!timeout);
-
-    dexCapSuit.Close();
-    logFile.close();
-}
-
-bool BluetoothEncryptionTest(const std::string & bleDevName, uint64_t timespan)
-{
-    DexCapSuit dexCapSuit(ProductVersion::V4);
-    dexCapSuit.registerStatusDataProc(SensorDataCallback);
-
-    printf("Connecting......\n  Device Name: %s\n\n", bleDevName.c_str());
-    const auto deviceType = dexCapSuit.ConnectDevice(bleDevName, BLUETOOTH);
-
-    if (deviceType == ExoApparatus::UnDefn)
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+    auto retCode = dexCapSuit.Start();
+    if (retCode != DEX_SUCCESS)
     {
-        std::cout << "Device connection failed: " << bleDevName << std::endl;
-        return false;
+        std::cout << "Failed to start sampling" << std::endl;
+        return;
     }
-
-    const auto it = DEVICE_NAMES.find(deviceType);
-    if (it == DEVICE_NAMES.end())
-    {
-        std::cout << "Unrecognized device name: " << bleDevName << std::endl;
-        return false;
-    }
-
-    const auto deviceId = dexCapSuit.GetDeviceID(deviceType);
-    std::cout << "Device device ID: " << static_cast<int>(deviceId)
-        << ". Device Name: " << it->second << std::endl;
-
-    auto connState = dexCapSuit.IsConnected(deviceType);
-    std::cout << "Device connection status: " << (connState ? "Connected" : "Disconnected")
-        << " on " << bleDevName << std::endl;
-
-    const auto startTs = current_timestamp();
-    const std::string logFileName = "./sensor_data_stream-" + timestamp_to_datetime_string(startTs) + ".log";
-    logFile.open(logFileName, std::ios_base::out | std::ios_base::app);
-    std::cout << "Output log file: " << logFileName << std::endl;
-
-    dexCapSuit.Start();
 
     bool timeout = false;
     do {
-        std::this_thread::sleep_for(std::chrono::seconds(5));
+        const auto batteryState = dexCapSuit.GetMainBatteryStatus();
+        if (batteryState != nullptr)
+        {
+            std::cout << "[Main Battery State]: CURR=" << batteryState->Currency << "mA"
+                << ", VOLT=" << (float)batteryState->Voltage / 1000 << "V"
+                << ", PWRM=" << batteryState->RemainPower << "%"
+                << ", TEMP=" << (float)batteryState->Temperature / 10 << "℃"
+                << std::endl;
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
         const auto currentTs = current_timestamp();
         const auto duration = currentTs - startTs;
         timeout = duration >= timespan * 1000;
-
-        const auto & dateStr = timestamp_to_datetime_string(currentTs);
-        std::cout << dateStr << std::endl;
     } while (!timeout);
 
     dexCapSuit.Close();
     logFile.close();
-
-    return true;
 }
+
+
+void WifiBasedConnectionExample(const std::string & address, uint64_t timespan)
+{
+    DexCapSuit dexCapSuit(WLAN_TCP);
+    dexCapSuit.registerStatusDataProc(SensorDataCallback);
+
+    const auto deviceType = dexCapSuit.ConnectDevice(address);
+
+    if (deviceType != LGlove && deviceType != RGlove && deviceType != UpBody && deviceType != JSBody)
+    {
+        std::cerr << address << " is not a DexCap device!" << std::endl;
+        return;
+    }
+
+    const auto startTs = current_timestamp();
+    const std::string logFileName = "./sensor_data_stream-" + timestamp_to_datetime_string(startTs) + ".log";
+    logFile.open(logFileName, std::ios_base::out | std::ios_base::app);
+    std::cout << "Output log file: " << logFileName << std::endl;
+
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+    const auto retCode = dexCapSuit.Start();
+    if (retCode != DEX_SUCCESS)
+    {
+        std::cout << "Failed to start sampling" << std::endl;
+        return;
+    }
+
+    bool timeout = false;
+    do {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        const auto currentTs = current_timestamp();
+        const auto duration = currentTs - startTs;
+        timeout = duration >= timespan * 1000;
+    } while (!timeout);
+
+    dexCapSuit.Close();
+    logFile.close();
+}
+
 
 int main(int argc, const char ** argv)
 {
@@ -299,19 +258,45 @@ int main(int argc, const char ** argv)
             std::string bleDevName;
             std::vector<std::string> args;
             split(args, strCmd, " ");
-            if (args.size() == 2)
-                bleDevName = std::string(args[1]);
+            if (args.size() == 4)
+            {
+                seconds = std::stoi(args[3]);
 
-            if (args.size() == 3)
-                seconds = std::stoi(args[2]);
-
-            RunDexCapExample(seconds);
-            //BluetoothEncryptionTest(bleDevName, 60);
+                if(args[1] == "-w")
+                {
+                    const auto ipAddr = std::string(args[2]);
+                    WifiBasedConnectionExample(ipAddr, seconds);
+                }
+            }
+            else if(args.size() == 3)
+            {
+                if(args[1] == "-w")
+                {
+                    const auto ipAddr = std::string(args[2]);
+                    WifiBasedConnectionExample(ipAddr, seconds);
+                }
+                else if(args[1] == "-u")
+                {
+                    seconds = std::stoi(args[2]);
+                    RunDexCapExample(seconds);
+                }
+            }
+            else if(args.size() < 2)
+            {
+                RunDexCapExample(seconds);
+            }
+            else
+            {
+                std::cout << "[Usage]: To run data sampling demo on DexCap devices, please use command below:" << std::endl;
+                std::cout << "[Demo]: run [-w <ip address> | -u] [seconds]" << std::endl;
+                std::cout << "        -w for wifi connection, -u for USB connection" << std::endl;
+            }
         }
         else
         {
             std::cout << "[Usage]: To run data sampling demo on DexCap devices, please use command below:" << std::endl;
-            std::cout << "[Demo]: run [seconds]" << std::endl;
+            std::cout << "[Demo]: run [-w <ip address> | -u] [seconds]" << std::endl;
+            std::cout << "        -w for wifi connection, -u for USB connection" << std::endl;
         }
 
         free(cmd);

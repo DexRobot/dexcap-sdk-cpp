@@ -30,8 +30,7 @@ dexcap-sdk-cpp/
 │   |   ├── DexCap.lib         # DexCap SDK的.lib文件
 │   |   ├── 其他                # 依赖的第三方库
 ├── conf/                      # V3.5所使用的配置文件及脚本，V4用户请忽略
-│   |   ├── config.yaml        # DexCap手套及外骨骼设备的SDK配置文件
-│   |   ├── env_setup.sh       # 环境配置文件，自动搜索系统中的串口设备并授予权限
+│   |   ├── env_setup.sh       # 环境配置文件，自动配置串口设备权限，安装依赖库等
 ├── examples/                  # 动态库文件所在目录
 │   ├── example.cpp            # C++示例代码
 │   ├── c_example.c            # C示例代码
@@ -49,10 +48,9 @@ dexcap-sdk-cpp/
 | `cpp/Utils.hpp`            | 字符串，日期，时间戳相关工具函数接口                                               |                        |
 | `typedef.h`                | DexCap SDK的C API用的基础数据类型，以及数据模型结构体声明，cpp/TypeDef.hpp中的部分内容依赖该头文件 | 
 | `dexcap.h`                 | DexCap SDK的C API核心头文件，提供DexCap套设备向用户开放的所有管理接口和数据访问的C语言接口         |
-| `configuration.h`          | 用于获取设备配置信息的接口声明，V3.5用户使用，V4用户请忽略                                 | 依赖yaml库                |   |
+| `configuration.h`          | 用于获取串口设备列表，以及设备可能的类型信息的接口声明                                      | 依赖yaml库                |   |
 | `libDexCap.so`             | DexCap SDK的Linux平台的动态库文件                                         | 依赖libserial等三方库        |
 | `DexCap.dll`, `DexCap.lib` | DexCap SDK的Windows平台的动态库文件                                       | 依赖Windows SDK          |
-| `config.yaml`              | 数采设备配置信息，设备的串口名，波特率，数采串口适配器类型(USB有线或2.4G无线)，等。V3.5用户使用，V4用户请忽略   |                        |
 | `env_setup.sh`             | Linux平台上的环境设置脚本，用于扫描系统中的USB串口设备并授予当前用户权限。V3.5用户使用，V4用户请忽略        | 需要sudo权限               |
 | `c_example.cpp`            | C示例代码，展示DexCap SDK C API的基本用法                                    | include目录下的头文件和动态库     |
 | `example.cpp`              | C++示例代码，展示DexCap SDK C++ API的基本用法                                | include/cpp目录下的头文件和动态库 |

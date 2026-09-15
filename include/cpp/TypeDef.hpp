@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <array>
+#include <functional>
 #include "typedef.h"
 
 #ifdef _WIN32
@@ -13,6 +14,7 @@ namespace DexRobot
 {
 
 typedef ADAPTER_TYPE AdapterType;
+using ConnectionType = AdapterType;
 
 enum class NetProtocolType
 {
@@ -48,23 +50,6 @@ struct DexCapErrorInfo
     uint8_t errorCode;
     uint8_t extParams[5];
     char messages[256];
-};
-
-struct SuitJointState
-{
-    DexCapJointData jointData;
-    MainBatteryState mainBatteryState;
-
-    SuitJointState();
-    SuitJointState(GloveJointAngles *lg,
-        GloveJointAngles *rg,
-        SkeletonJointAngles *bd,
-        MainBatteryState * bat,
-        InertialUnitData * imu=nullptr);
-    SuitJointState(const SuitJointState &) noexcept;
-    SuitJointState(SuitJointState &&) noexcept;
-    SuitJointState & operator=(const SuitJointState &) noexcept;
-    SuitJointState & operator=(SuitJointState &&) noexcept;
 };
 
 }

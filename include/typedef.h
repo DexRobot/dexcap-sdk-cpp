@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stddef.h>
 #include <stdint.h>
 
 #ifdef __GNUC__
@@ -8,24 +7,18 @@
 #endif
 
 #ifdef _MSC_VER
+#include <cstddef>
 #define PACK( __Declaration__ ) __pragma( pack(push, 1) ) __Declaration__ __pragma( pack(pop) )
 #endif
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
-#ifndef _WIN32
-#ifndef BOOL
-#define BOOL unsigned char
-#else
+#ifdef BOOL
 #undef BOOL
-#define BOOL int
 #endif
-#else
-typedef int BOOL;
-#endif
+#define BOOL unsigned char
 
 #ifndef TRUE
 #define TRUE 1
@@ -39,6 +32,22 @@ typedef int BOOL;
 #else
 #undef FALSE
 #define FALSE 0
+#endif
+
+#ifdef CHAR
+#undef CHAR
+#endif
+
+#ifdef UCHAR
+#undef UCHAR
+#endif
+
+#ifdef __GNUC__
+typedef char CHAR;
+typedef unsigned char UCHAR;
+#elif defined(_MSC_VER)
+#define CHAR char
+#define UCHAR unsigned char
 #endif
 
 #define DEXCAP_SUIT_HANDLE void *
@@ -106,10 +115,10 @@ typedef enum
 {
     INVALID   = 0,
     WIREDUSB  = 0x01,
-    WIRELESS  = 0x02,
+    WLAN80211 = 0x02,
     COMMONUSB = 0x03,     // Reserved for internal use, useless for common user
     BLUETOOTH = 0x04,
-    MODBUSUSB = 0x06,     //Currently only for imu
+    WLAN_TCP  = 0x08,
 } ADAPTER_TYPE;
 
 typedef enum
@@ -118,7 +127,7 @@ typedef enum
     LGlove = 0x01,
     RGlove = 0x02,
     UpBody = 0x04,
-    IMUnit = 0x08,
+    JSBody = 0x0A,
     WRecvr = 0x20,
 } DEXCAP_DEVICE_TYPE;
 
@@ -141,36 +150,30 @@ typedef enum
 
 typedef enum
 {
-    W_JOINT_B,    // DOF of IMU, End point of waist
-    W_JOINT_1,
-    W_JOINT_2,
-    W_JOINT_3,
-    W_JOINT_4,
-    W_JOINT_5,
-    W_JOINT_U,    // A dummy DOF of center of shoulder
-    L_JOINT_1,
-    L_JOINT_2,
-    L_JOINT_3,
-    L_JOINT_4,
-    L_JOINT_5,
-    L_JOINT_6,
-    L_JOINT_7,
-    L_JOINT_8,
-    L_JOINT_9,
-    R_JOINT_1,
-    R_JOINT_2,
-    R_JOINT_3,
-    R_JOINT_4,
-    R_JOINT_5,
-    R_JOINT_6,
-    R_JOINT_7,
-    R_JOINT_8,
-    R_JOINT_9,
+    L_JOINT_1 = 0x01,
+    L_JOINT_2 = 0x02,
+    L_JOINT_3 = 0x03,
+    L_JOINT_4 = 0x04,
+    L_JOINT_5 = 0x05,
+    L_JOINT_6 = 0x06,
+    L_JOINT_7 = 0x07,
+    L_JOINT_8 = 0x08,
+    L_JOINT_9 = 0x09,
+    R_JOINT_1 = 0x11,
+    R_JOINT_2 = 0x12,
+    R_JOINT_3 = 0x13,
+    R_JOINT_4 = 0x14,
+    R_JOINT_5 = 0x15,
+    R_JOINT_6 = 0x16,
+    R_JOINT_7 = 0x17,
+    R_JOINT_8 = 0x18,
+    R_JOINT_9 = 0x19,
 } ExoSkeletonJointID;
 
 typedef enum ProductVersion_t
 {
     NA = 0x00, V3 = 0x03, V4 = 0x04,
+    V4C1 = 0x4C1, V4C2 = 0x4C2, V4C3 = 0x4C3,
 } ProductVersion;
 
 PACK(typedef struct GloveJointAngles_t
@@ -201,7 +204,21 @@ PACK(typedef struct GloveJointAngles_t
     uint64_t timestamp;
 } GloveJointAngles);
 
-PACK(typedef struct SkeletonJointAngles_t
+PACK(typedef struct Joystick_t
+{
+    int16_t  RockerX  : 16;
+    int16_t  RockerY  : 16;
+    uint16_t TgrDistA : 16;
+    uint16_t TgrDistB : 16;
+    uint8_t  ButtonA  : 1;
+    uint8_t  ButtonB  : 1;
+    uint8_t  RockerZ  : 1;
+    uint8_t  TriggerA : 1;
+    uint8_t  TriggerB : 1;
+    int16_t  Reserved : 11;
+} Joystick);
+
+PACK(typedef struct SkeletonArmsData_t
 {
     uint16_t LArm1;
     uint16_t LArm2;
@@ -210,8 +227,6 @@ PACK(typedef struct SkeletonJointAngles_t
     uint16_t LArm5;
     uint16_t LArm6;
     uint16_t LArm7;
-    uint16_t LArm8;
-    uint16_t LArm9;
     uint16_t RArm1;
     uint16_t RArm2;
     uint16_t RArm3;
@@ -219,67 +234,39 @@ PACK(typedef struct SkeletonJointAngles_t
     uint16_t RArm5;
     uint16_t RArm6;
     uint16_t RArm7;
-    uint16_t RArm8;
-    uint16_t RArm9;
-    uint16_t Back1;
-    uint16_t Back2;
-    uint16_t Back3;
-    uint16_t Back4;
-    uint16_t Back5;
-    uint16_t Reserved;
+    Joystick LJoyS;  // Left Joystick
+    Joystick RJoyS;  // Right Joystick
     uint64_t timestamp;
-} SkeletonJointAngles);
+} SkeletonArmsData);
 
-PACK(typedef struct MainBatteryState_t
+PACK(typedef struct MainBatteryStatus_t
 {
     int16_t  Currency; // Positive for charging, negative for discharging, in mA
     uint16_t Voltage;  // As in mV
     uint16_t RemainPower;  // Percentage of remaining power
     uint16_t Temperature;  // As in centigrade value divided by 10
     uint16_t StatusBitmap;
-    uint16_t Reserved;
-} MainBatteryState);
+} MainBatteryStatus);
 
-PACK(typedef struct BodyBoardState_t
+typedef struct SystemStatus_t
 {
-    BOOL Enabled;  // Whether sensors are enabled
-    BOOL CharingL;
-    BOOL CharingR;
-    BOOL BLEConnected;
-    BOOL NeedCharge;
-} BodyBoardState);
+    BOOL  Enabled    : 1;  // Whether sensors are enabled
+    UCHAR Reserved1  : 2;
+    BOOL  WifiState  : 1;
+    BOOL  BootState  : 1;
+    BOOL  NeedCharge : 1;
+    BOOL  Reserved2  : 1;
+    BOOL  LJoyConn   : 1;
+    BOOL  RJoyConn   : 1;
+    BOOL  Reserved3  : 7;
+} SystemStatus;
 
-PACK(typedef struct InertialUnitData_t
+typedef struct SuitStatusData_t
 {
-    float roll;
-    float pitch;
-    float yaw;
-    float quat[4];     // quaternion
-    float accel[3];    // accelerometer (x, y, z)
-    float gyscp[3];    // gyroscope (x, y, z)
-    float magnt[3];    // magnetometer (x, y, z)
-    float air_pressure; // air pressure
-    int8_t temp;         // Temperature
-    uint32_t system_time;//system time
-    uint64_t timestamp;
-} InertialUnitData);
-
-PACK(typedef struct InetMUData_t
-{
-    uint32_t sys_time;   //system time of imu,for debug
-    float poseData[17];  //The data order is from InertialUnitData's roll to air_pressure
-    int8_t temp;         // Temperature
-}InetMUData);
-
-PACK(typedef struct DexCapJointData_t
-{
-    uint32_t mask;
-    uint16_t LGlove[24];
-    uint16_t ExBody[24];
-    uint16_t RGlove[24];
-    InetMUData InetMU;
-    uint64_t timestamp;
-} DexCapJointData);
+    SkeletonArmsData jointData;
+    MainBatteryStatus mainBatteryState;
+    SystemStatus systemStatus;
+} SuitStatusData;
 
 PACK(typedef struct DexCapEndPoses_t
 {
@@ -288,7 +275,7 @@ PACK(typedef struct DexCapEndPoses_t
     uint64_t timestamp;
 } DexCapEndPoses);
 
-typedef void (* DexCapJointDataProc)(const DexCapJointData *);
+typedef void (* DexCapSuitDataProc)(const SuitStatusData *);
 
 #ifdef __cplusplus
 }

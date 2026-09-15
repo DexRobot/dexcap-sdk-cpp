@@ -33,23 +33,23 @@ endif()
 
 
 ADD_EXECUTABLE(DexCapDemo example.cpp example_defs.h)
-ADD_EXECUTABLE(DexCapDemo_C c_example.c example_defs.h)
+#ADD_EXECUTABLE(DexCapDemo_C c_example.c example_defs.h)
 
 if(UNIX)
     target_include_directories(DexCapDemo PUBLIC ${INCLUDE_DIRECTORIES})
-    target_include_directories(DexCapDemo_C PUBLIC ${INCLUDE_DIRECTORIES})
+#target_include_directories(DexCapDemo_C PUBLIC ${INCLUDE_DIRECTORIES})
     set(CMAKE_CXX_FLAGS "$ENV{CXXFLAGS} -g -mavx2 -mfma -O2 -Wno-narrowing -Wno-deprecated-enum-enum-conversion")
     set(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -g -mavx2 -mfma -O0 -Wno-narrowing -Wno-deprecated-enum-enum-conversion")
     set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -g -mavx2 -mfma -O2 -Wno-narrowing -Wno-deprecated-enum-enum-conversion")
     add_compile_options(-m64 -shared -fPIC -fno-strict-aliasing -Wstringop-overflow=0 -Wpessimizing-move)
 
     target_link_libraries(DexCapDemo PUBLIC ${DEP_LIB_DIR}/libserial.so ${DEP_LIB_DIR}/libyaml-cpp.so ${DEP_LIB_DIR}/libusb-1.0.so ${DEP_LIB_DIR}/libDexCap.so)
-    target_link_libraries(DexCapDemo_C PUBLIC ${DEP_LIB_DIR}/libserial.so ${DEP_LIB_DIR}/libyaml-cpp.so ${DEP_LIB_DIR}/libusb-1.0.so ${DEP_LIB_DIR}/libDexCap.so)
+#target_link_libraries(DexCapDemo_C PUBLIC ${DEP_LIB_DIR}/libserial.so ${DEP_LIB_DIR}/libyaml-cpp.so ${DEP_LIB_DIR}/libusb-1.0.so ${DEP_LIB_DIR}/libDexCap.so)
 else()
     target_compile_definitions(DexCapDemo PRIVATE DexCap _AMD64_)
-    target_compile_definitions(DexCapDemo_C PRIVATE DexCap _AMD64_)
+#target_compile_definitions(DexCapDemo_C PRIVATE DexCap _AMD64_)
     target_include_directories(DexCapDemo PUBLIC ${INCLUDE_DIRECTORIES})
-    target_include_directories(DexCapDemo_C PUBLIC ${INCLUDE_DIRECTORIES})
+#target_include_directories(DexCapDemo_C PUBLIC ${INCLUDE_DIRECTORIES})
 
     add_definitions(
             /GS /W3 /Gy /Ob2 /Zc:wchar_t /Zi /Gm- /Zc:inline /Zc:__cplusplus /fp:precise /D "WIN32"
@@ -66,23 +66,8 @@ else()
 
     link_directories(${DEP_LIB_DIR})
     target_link_libraries(DexCapDemo PUBLIC ${DEP_LIB_DIR}/DexCap.lib)
-    target_link_libraries(DexCapDemo_C PUBLIC ${DEP_LIB_DIR}/DexCap.lib)
+#target_link_libraries(DexCapDemo_C PUBLIC ${DEP_LIB_DIR}/DexCap.lib)
 endif()
 
 set_target_properties(DexCapDemo PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${TARGET_DIR}")
-set_target_properties(DexCapDemo_C PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${TARGET_DIR}")
-
-if(UNIX)
-    add_custom_target(COPY_CONF_FILE ALL
-        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/../conf/config.yaml ${TARGET_DIR}/config.yaml
-        COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/../conf/env_setup.sh ${TARGET_DIR}/env_setup.sh
-    )
-else()
-    add_custom_target(COPY_TARGET_FILES_WIN ALL
-        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy
-            ${PROJECT_SOURCE_DIR}/../conf/config.yaml
-            ${TARGET_DIR}/config.yaml
-        )
-endif()
+#set_target_properties(DexCapDemo_C PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${TARGET_DIR}")

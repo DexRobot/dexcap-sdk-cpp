@@ -17,52 +17,21 @@ using namespace LibSerial;
 namespace DexRobot
 {
 
-class Socket;
-class DexCapDevice;
-class DexGlove;
-class DexoBody;
-class DexIMUnit;
-class DeviceStatuData;
-class BluetoothDriver;
-class DexCapDataHandler;
-class ForwardKinematics;
-
 typedef DEXCAP_DEVICE_TYPE ExoApparatus;
 
-using DexCapStatusDataProc = std::function<void (const DexCapJointData *)>;
-
-class WLReceiverHelper final
-{
-public:
-    WLReceiverHelper() = delete;
-    ~WLReceiverHelper() = delete;
-
-    static bool SetChannel(const char * serPort, uint8_t channel);
-    static bool SetTxAddress(const char * serPort, uint16_t txAddr);
-    static bool SetRxAddress(const char * serPort, uint16_t rxAddr);
-    static bool SetWorkPower(const char * serPort, uint8_t powerLevel);
-
-    static uint8_t  GetChannel(const char * serPort);
-    static uint16_t GetTxAddress(const char * serPort);
-    static uint16_t GetRxAddress(const char * serPort);
-    static WLPowerLevel GetWorkPower(const char * serPort);
-};
 
 class DexCapSuit
 {
 public:
     DexCapSuit() = delete;
-    explicit DexCapSuit(ProductVersion version, const std::string & configFile = "./config.yaml");
+    explicit DexCapSuit(AdapterType connectionType, ProductVersion version=V4C1);
     virtual ~DexCapSuit();
 
-    virtual ExoApparatus ConnectDevice(const std::string & adapterName, AdapterType adapterType, bool forceCharge=false);
-    virtual bool DisconnectDevice(const std::string & adapterName);
+    virtual ExoApparatus ConnectDevice(const std::string & deviceAddress);
+    virtual bool DisconnectDevice(const std::string & deviceAddress);
     virtual bool DisconnectDevice(ExoApparatus device);
 
     [[nodiscard]] std::string GetAdapterName(ExoApparatus device) const;
-
-    bool InitNetwork(const std::string & serverAddr, int serverPort, NetProtocolType netType);
-    bool CloseNetwork();
 
     ProductVersion & productVersion();
     [[nodiscard]] const ProductVersion & productVersion() const;
@@ -75,7 +44,6 @@ public:
 
     [[nodiscard]] bool IsConnected(ExoApparatus device);
     [[nodiscard]] bool IsSensorEnabled(ExoApparatus device) const;
-    [[nodiscard]] bool IsBluetoothConnected(ExoApparatus device) const;
     [[nodiscard]] bool IsChargeNeeded(ExoApparatus device) const;
 
     [[nodiscard]] bool IsRunning() const;
@@ -94,21 +62,18 @@ public:
 
     [[nodiscard]] ExoApparatus GetDeviceType(const std::string & adapterName) const;
 
-    [[nodiscard]] const SuitJointState & GetSuitJointState() const;
-    [[nodiscard]] const SkeletonJointAngles & GetBodyJointState() const;
-    [[nodiscard]] const GloveJointAngles & GetLeftGloveJointState() const;
-    [[nodiscard]] const GloveJointAngles & GetRightGloveJointState() const;
-    [[nodiscard]] const InertialUnitData & GetIMUSensorData() const;
+    [[nodiscard]] const SuitStatusData & GetSuitJointState() const;
+    [[nodiscard]] const SkeletonArmsData & GetArmsJointsState() const;
+    [[nodiscard]] const Joystick & GetLJoyStickState() const;
+    [[nodiscard]] const Joystick & GetRJoyStickState() const;
 
     [[nodiscard]] const DexCapEndPoses & GetEndPose() const;
 
-    [[nodiscard]] uint16_t GetBatteryLevel(ExoApparatus device);
-    [[nodiscard]] const MainBatteryState *GetMainBatteryState() const;
+    [[nodiscard]] uint16_t GetBatteryLevel(ExoApparatus device) const;
+    [[nodiscard]] const MainBatteryStatus *GetMainBatteryStatus() const;
 
     void VibeMotors(ExoApparatus hand, const std::vector<uint8_t> &) const;
     [[nodiscard]] std::string GetFirmwareVersion(ExoApparatus device) const;
-
-    [[nodiscard]] bool ChargeGlove(uint8_t gloveType, bool chargeOn=true) const;
 
     [[nodiscard]] bool anyError(ExoApparatus device) const;
     [[nodiscard]] ErrorCode getErrorCode(ExoApparatus device) const;
@@ -117,10 +82,7 @@ public:
     [[nodiscard]] ErrorCode getErrorCode() const;
     const std::string & getErrorMessage();
 
-    void registerStatusDataProc(const DexCapStatusDataProc & callback);
-
-    [[nodiscard]] size_t RegisterImuDataCallback(const std::function<void(uint8_t, const std::shared_ptr<DeviceStatuData>&)>& callback) const;
-    void UnregisterImuDataCallback(size_t handle) const;
+    void registerStatusDataProc(const DexCapSuitDataProc & callback);
 
 private:
     class DexCapSuitImpl *impl;
